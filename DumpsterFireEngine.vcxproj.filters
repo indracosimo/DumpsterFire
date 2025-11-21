@@ -27,27 +27,6 @@
     <ClCompile Include="Dependencies\include\glm\glm.cppm">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imgui_docking\backends\imgui_impl_glfw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_docking\backends\imgui_impl_opengl3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_docking\imgui.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_docking\imgui_demo.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_docking\imgui_draw.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_docking\imgui_tables.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_docking\imgui_widgets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Dependencies\imgui_docking\imgui.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -67,6 +46,30 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Dependencies\imgui_docking\backends\imgui_impl_opengl3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input\input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\application.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\renderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\geometry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\graphics\textureLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui\uiManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1178,21 +1181,6 @@
     <ClInclude Include="Dependencies\include\stb\stb_image.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="imgui_docking\backends\imgui_impl_glfw.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_docking\backends\imgui_impl_opengl3.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_docking\imconfig.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_docking\imgui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_docking\imgui_internal.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Dependencies\imgui_docking\imconfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1218,6 +1206,33 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Dependencies\imgui_docking\backends\imgui_impl_opengl3_loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\input\input.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaders\shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\application.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\renderer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\geometry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\textureLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ui\uiManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1650,6 +1665,10 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="Dependencies\lib\glfw3.pdb" />
+    <None Include=".gitattributes" />
+    <None Include=".gitignore" />
+    <None Include="src\shaders\vertexShader.vs" />
+    <None Include="src\shaders\fragmentShader.fs" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Dependencies\include\glm\CMakeLists.txt" />

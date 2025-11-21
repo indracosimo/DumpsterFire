@@ -1,0 +1,33 @@
+#pragma once
+#include "graphics/renderer.h"
+#include <vector>
+
+struct ImGuiIO;
+struct GLFWwindow;
+
+
+
+class uiManager
+{
+public:
+    uiManager();
+    ~uiManager();
+
+    void Initialize(GLFWwindow* window);
+    void Shutdown();
+
+    void BeginFrame();
+    void EndFrame();
+
+    void RenderCubeControls(std::vector<CubeTransform>& cubes, int& selectedCubeIndex, CubeTransform& newCubeTransform);
+
+    bool bInitialized;
+
+    void init()
+    {
+        if (!bInitialized)
+        {
+            bInitialized = true;
+        }
+    }
+};
