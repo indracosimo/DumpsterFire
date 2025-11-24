@@ -10,11 +10,11 @@
 #include <iostream>
 #include <vector>
 
-application::application(int width, int height, const char* title)
-    : SCR_WIDTH(width), SCR_HEIGHT(height), window(nullptr)
+application::application(const Resolution& res, const char* title)
+    : SCR_WIDTH(res.width), SCR_HEIGHT(res.height), window(nullptr)
 {
     initGLFW();
-    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "DumpsterFire", NULL, NULL);
+    window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, title, nullptr, nullptr);
     if (!window)
     {
         std::cerr << "Failed to create window\n";
@@ -80,16 +80,32 @@ void application::Run()
     {
         float currentFrame = (float)glfwGetTime();
         float deltaTime = currentFrame - lastFrame;
+        if (deltaTime <= 0.0f) deltaTime = 1.0f / 60.0f;
         lastFrame = currentFrame;
 
         processInput(window);
         camera.Inputs(window, deltaTime);
 
         uiManager.BeginFrame();
-        uiManager.RenderCubeControls(cubes, selectedCubeIndex, newCube);
-        uiManager.EndFrame();
+		
+        //uiManager.RenderDocking();
 
+        uiManager.RenderCubeControls(cubes, selectedCubeIndex, newCube);
+        {
+            ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
+            ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
+                ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNav;
+            ImGui::Begin("FPS", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize);
+            ImGui::Text("FPS: %.1f", 1.0f / deltaTime);
+            ImGui::Text("Frame: %.2f ms", deltaTime * 1000.0f);
+            ImGui::End();
+        }
+
+        renderer.mainShader->use();
+        camera.Matrix(45.0f, 0.1f, 100.0f, *renderer.mainShader, "cameraMatrix");
         renderer.render(cubes);
+
+        uiManager.EndFrame();
 
         glfwSwapBuffers(window);
         glfwPollEvents();

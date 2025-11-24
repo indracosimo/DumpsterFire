@@ -1,8 +1,9 @@
+#include "geometry.h"
 #include "renderer.h"
 #include "textureLoader.h"
 #include <glad/glad.h>
-#include <iostream>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
 
 
 
@@ -10,11 +11,15 @@ renderer::renderer(unsigned int width, unsigned int height)
 	: SCR_WIDTH(width), SCR_HEIGHT(height)
 {
 	glEnable(GL_DEPTH_TEST);
-	mainShader = new Shader("shaders/vertexShader.vs", "shaders/fragmentShader.fs");
+	mainShader = new Shader("src/shaders/vertexShader.vs", "src/shaders/fragmentShader.fs");
+
 	setupCube();
 	setupQuad();
 	setupFramebuffer();
 	loadTextures();
+
+	std::cout << "texColorBuffer ID: " << texColorBuffer << std::endl;
+	std::cout << "texture1 ID: " << texture1 << std::endl;
 }
 
 renderer::~renderer()
@@ -34,10 +39,13 @@ void renderer::setupCube()
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, getCubeVertexCount() * sizeof(float), vertices, GL_STATIC_DRAW);
 
+	// position
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	// texcoords
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 	glEnableVertexAttribArray(1);
+	// color
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
 	glEnableVertexAttribArray(2);
 }
@@ -92,6 +100,7 @@ void renderer::loadTextures()
 
 void renderer::render(const std::vector<CubeTransform>& cubes) 
 {
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//glBindFramebuffer(GL_FRAMEBUFFER, bEnableCRT ? framebuffer : 0);
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
@@ -111,9 +120,9 @@ void renderer::render(const std::vector<CubeTransform>& cubes)
 			float(SCR_WIDTH) / SCR_HEIGHT,
 			0.1f, 9999.0f);
 		model = glm::translate(model, cube.position);
-		model = glm::rotate(model, glm::radians(cube.rotation.x), glm::vec3(1, 0, 0));
-		model = glm::rotate(model, glm::radians(cube.rotation.y), glm::vec3(0, 1, 0));
-		model = glm::rotate(model, glm::radians(cube.rotation.z), glm::vec3(0, 0, 1));
+		model = glm::rotate(model, glm::radians(cube.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(cube.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, glm::radians(cube.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, cube.scale);
 
 		mainShader->setMat4("projection", projection);

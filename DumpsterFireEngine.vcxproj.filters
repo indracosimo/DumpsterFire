@@ -1217,9 +1217,6 @@
     <ClInclude Include="src\core\camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\shaders\shader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\core\application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1233,6 +1230,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\ui\uiManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\graphics\shader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaders\shader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -1669,11 +1672,22 @@
     <None Include=".gitignore" />
     <None Include="src\shaders\vertexShader.vs" />
     <None Include="src\shaders\fragmentShader.fs" />
+    <None Include="imgui.ini" />
+    <None Include="x64\Debug\shaders\fragmentShader.fs" />
+    <None Include="x64\Debug\shaders\vertexShader.vs" />
+    <None Include="x64\Debug\DumpsterFireEngine.exe" />
+    <None Include="x64\Debug\DumpsterFireEngine.pdb" />
+    <None Include="x64\Debug\imgui.ini" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Dependencies\include\glm\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\lib\glfw3.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\images\concrete.jpg">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

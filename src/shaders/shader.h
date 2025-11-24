@@ -22,7 +22,8 @@ public:
 		std::string fragmentCode;
 		std::ifstream vShaderFile;
 		std::ifstream fShaderFile;
-
+		std::cout << "Loading vertex shader: " << vertexPath << "\n";
+		std::cout << "Loading fragment shader: " << fragmentPath << "\n";
 		vShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 		fShaderFile.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 		try

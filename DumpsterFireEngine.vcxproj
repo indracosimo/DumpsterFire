@@ -541,10 +541,11 @@
     <ClInclude Include="Dependencies\include\glm\vector_relational.hpp" />
     <ClInclude Include="Dependencies\include\KHR\khrplatform.h" />
     <ClInclude Include="Dependencies\include\stb\stb_image.h" />
+    <ClInclude Include="src\graphics\shader.h" />
     <ClInclude Include="src\input\input.h" />
     <ClInclude Include="src\core\config.h" />
-    <ClInclude Include="src\shaders\shader.h" />
     <ClInclude Include="src\graphics\textureLoader.h" />
+    <ClInclude Include="src\shaders\shader.h" />
     <ClInclude Include="src\ui\uiManager.h" />
   </ItemGroup>
   <ItemGroup>
@@ -702,14 +703,23 @@
     <None Include="Dependencies\include\glm\gtx\vector_query.inl" />
     <None Include="Dependencies\include\glm\gtx\wrap.inl" />
     <None Include="Dependencies\lib\glfw3.pdb" />
+    <None Include="imgui.ini" />
     <None Include="src\shaders\fragmentShader.fs" />
     <None Include="src\shaders\vertexShader.vs" />
+    <None Include="x64\Debug\DumpsterFireEngine.exe" />
+    <None Include="x64\Debug\DumpsterFireEngine.pdb" />
+    <None Include="x64\Debug\imgui.ini" />
+    <None Include="x64\Debug\shaders\fragmentShader.fs" />
+    <None Include="x64\Debug\shaders\vertexShader.vs" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Dependencies\include\glm\CMakeLists.txt" />
   </ItemGroup>
   <ItemGroup>
     <Library Include="Dependencies\lib\glfw3.lib" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\images\concrete.jpg" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

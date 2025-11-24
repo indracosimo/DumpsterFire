@@ -20,6 +20,7 @@ public:
     void EndFrame();
 
     void RenderCubeControls(std::vector<CubeTransform>& cubes, int& selectedCubeIndex, CubeTransform& newCubeTransform);
+    void RenderDocking();
 
     bool bInitialized;
 
