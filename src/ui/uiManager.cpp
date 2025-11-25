@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 #include <string>
 
+
 uiManager::uiManager() 
 {
 	return;
@@ -23,7 +24,7 @@ void uiManager::Initialize(GLFWwindow* window)
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    io.FontGlobalScale = 1.0f;
+    io.FontGlobalScale = 3.0f;
     (void)io;
     //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   
     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;

@@ -5,7 +5,8 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "input/input.h"
-#include "graphics/renderer.h"
+#include "graphics/mesh.h"
+#include "graphics/objectLoader.h"
 #include "ui/uiManager.h"
 #include <iostream>
 #include <vector>
@@ -67,7 +68,7 @@ void application::Run()
     camera camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0, 0, 2));
     renderer renderer(SCR_WIDTH, SCR_HEIGHT);
     uiManager uiManager;
-
+    mesh planeMesh = objectLoader::loadOBJ("Assets/meshes/obj/quadPlane.obj");
     uiManager.Initialize(window);
 
     std::vector<CubeTransform> cubes;
@@ -103,8 +104,10 @@ void application::Run()
 
         renderer.mainShader->use();
         camera.Matrix(45.0f, 0.1f, 100.0f, *renderer.mainShader, "cameraMatrix");
-        renderer.render(cubes);
 
+        planeMesh.DrawMesh();
+
+        renderer.render(cubes);
         uiManager.EndFrame();
 
         glfwSwapBuffers(window);

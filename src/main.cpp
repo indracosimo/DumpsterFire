@@ -3,7 +3,7 @@
 
 int main() 
 {
-    application app(Resolution(config::SD.width, config::SD.height), "DumpsterFire");
+    application app(Resolution(config::UHD4K.width, config::UHD4K.height), "DumpsterFire");
 	app.Run();
     return 0;
 }

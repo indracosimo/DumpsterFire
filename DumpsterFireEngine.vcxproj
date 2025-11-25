@@ -110,7 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies;$(ProjectDir)\Dependencies\imgui_docking;$(ProjectDir)\Dependencies\imgui_docking\backends;%(AdditionalIncludeDirectories);$(SolutionDir)Dependencies\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)\Dependencies;$(ProjectDir)\Dependencies\imgui_docking;$(ProjectDir)\Dependencies\imgui_docking\backends;%(AdditionalIncludeDirectories);$(SolutionDir)Dependencies\include;$(SolutionDir)\Assets\meshes</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
@@ -138,6 +138,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\graphics\objectLoader.cpp" />
     <ClCompile Include="src\graphics\geometry.cpp" />
     <ClCompile Include="src\graphics\renderer.cpp" />
     <ClCompile Include="src\core\application.cpp" />
@@ -159,6 +160,8 @@
     <ClCompile Include="src\ui\uiManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\graphics\mesh.h" />
+    <ClInclude Include="src\graphics\objectLoader.h" />
     <ClInclude Include="src\graphics\geometry.h" />
     <ClInclude Include="src\graphics\renderer.h" />
     <ClInclude Include="src\core\application.h" />

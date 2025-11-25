@@ -11,8 +11,4 @@ namespace config
 	static constexpr Resolution HD = {1920, 1080};
 	static constexpr Resolution QHD = {2560, 1440};
 	static constexpr Resolution UHD4K = {3840, 2169};
-
-	static constexpr float CubeDefaultScale = 1.0f;
-	static constexpr float CubeMaxScale = 10.0f;
-	static constexpr float CubeMinScale = 0.1f;
 }

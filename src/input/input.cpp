@@ -39,7 +39,7 @@ void processInput(GLFWwindow* window)
 
 void camera::Inputs(GLFWwindow* window, float deltaTime)
 {
-    //Lets you use the imgui window when clicking on it, without firing the camera controls
+
     ImGuiIO& io = ImGui::GetIO();
     if (io.WantCaptureMouse || io.WantCaptureKeyboard)
     {
@@ -99,7 +99,7 @@ void camera::Inputs(GLFWwindow* window, float deltaTime)
     {
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_HIDDEN);
 
-        // Prevents camera from jumping on the first click
+        // Prevents camera from jumping on the first clickz
         if (bFirstClick)
         {
             glfwSetCursorPos(window, (width / 2), (height / 2));
