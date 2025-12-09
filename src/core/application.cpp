@@ -9,6 +9,10 @@
 #include "ui/uiManager.h"
 #include <iostream>
 #include <vector>
+#include "../MessageManager.h"
+#include "../MessageQueue.h"
+
+extern GLFWwindow* window;
 
 application::application(const Resolution& res, const char* title)
     : SCR_WIDTH(res.width), SCR_HEIGHT(res.height), window(nullptr)
@@ -87,7 +91,10 @@ void application::Run()
         camera.Inputs(window, deltaTime);
 
         uiManager.BeginFrame();
-		
+
+	//process messages
+		g_messageQueue.processMessage();
+
         //uiManager.RenderDocking();
 
         uiManager.RenderCubeControls(cubes, selectedCubeIndex, newCube);

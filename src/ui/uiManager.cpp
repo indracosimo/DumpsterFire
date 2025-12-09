@@ -4,8 +4,10 @@
 #include "uiManager.h"
 #include <GLFW/glfw3.h>
 #include <string>
+#include "../../MessageQueue.h"
 
-
+extern GLFWwindow* window;
+ 
 uiManager::uiManager() 
 {
 	return;
@@ -95,6 +97,9 @@ void uiManager::RenderCubeControls(std::vector<CubeTransform>& cubes, int& selec
 
         cubes.push_back(newCubeTransform);
         selectedCubeIndex = static_cast<int>(cubes.size()) - 1;
+
+        //push cubes into message queue
+        g_messageQueue.push(std::make_unique<CubeSpawnedMessage>(newCubeTransform));
 
         newCubeTransform.name = "Nameless Cube";
     }

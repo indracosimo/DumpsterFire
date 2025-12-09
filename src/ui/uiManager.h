@@ -1,5 +1,6 @@
 #pragma once
 #include "graphics/renderer.h"
+#include "../MessageManager.h"
 #include <vector>
 
 struct ImGuiIO;

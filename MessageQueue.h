@@ -1,9 +1,26 @@
-#include <queue>
+#ifndef MESSAGEQUEUE_H
+#define MESSAGEQUEUE_H
+
 #include <memory>
-#include <iostream>
 #include <mutex>
+#include <queue>
+#include "MessageManager.h"
+
+
+class MessageManager;
 
 class MessageQueue
 {
-};
+public:
 
+	void push(std::unique_ptr<MessageManager> message);
+
+	void processMessage();
+
+
+private:
+	std::queue<std::unique_ptr<MessageManager>> queue;
+	std::mutex mutex;
+};
+extern MessageQueue g_messageQueue; //declares a global message queue
+#endif MESSAGEQUEUE_H

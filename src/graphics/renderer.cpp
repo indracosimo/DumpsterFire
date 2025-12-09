@@ -101,7 +101,7 @@ void renderer::loadTextures()
 
 void renderer::render(const std::vector<CubeTransform>& cubes) 
 {
-	mesh planeMesh = objectLoader::loadOBJ("assets/obj/Plane.obj");
+	mesh planeMesh = objectLoader::loadOBJ("assets/obj/Viking_House.obj");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//glBindFramebuffer(GL_FRAMEBUFFER, bEnableCRT ? framebuffer : 0);
 	glEnable(GL_DEPTH_TEST);

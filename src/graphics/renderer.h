@@ -4,7 +4,7 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-struct CubeTransform
+struct CubeTransform //Entity transform data
 {
     std::string name = "Nameless Cube";
     glm::vec3 position{ 0.0f };

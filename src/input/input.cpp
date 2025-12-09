@@ -5,6 +5,9 @@
 #include "core/camera.h"
 #include <glad/glad.h>
 #include "../../MessageManager.h"
+#include "../../MessageQueue.h"
+
+extern GLFWwindow* window;
 
 bool bWireFramez = false;
 bool bEnableCRT = false;
@@ -43,6 +46,7 @@ void camera::Inputs(GLFWwindow* window, float deltaTime)
 	//Mouse message processing
     double mouseX, mouseY;
     glfwGetCursorPos(window, &mouseX, &mouseY);
+    bool bIsMouseClicked = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS);
 
     ImGuiIO& io = ImGui::GetIO();
     if (io.WantCaptureMouse || io.WantCaptureKeyboard)
@@ -50,9 +54,8 @@ void camera::Inputs(GLFWwindow* window, float deltaTime)
         return;
     }
 	//Process mouse message
-    bool bIsMouseClicked = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS);
     MouseMessage mouseMsg(static_cast<int>(mouseX), static_cast<int>(mouseY), bIsMouseClicked);
-    mouseMsg.processMessage();
+    g_messageQueue.push(std::make_unique<MouseMessage>(mouseMsg));
 
     float frameSpeed = speed;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
@@ -61,31 +64,31 @@ void camera::Inputs(GLFWwindow* window, float deltaTime)
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
         Position += frameSpeed * deltaTime * Orientation;
-        std::cout << "w pressed" << std::endl;
+        //std::cout << "w pressed" << std::endl;
     }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
         Position += frameSpeed * deltaTime * -glm::normalize(glm::cross(Orientation, Up));
-        std::cout << "a pressed" << std::endl;
+        //std::cout << "a pressed" << std::endl;
     }
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
         Position += frameSpeed * deltaTime * -Orientation;
-        std::cout << "s pressed" << std::endl;
+        //std::cout << "s pressed" << std::endl;
     }
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
         Position += frameSpeed * deltaTime * glm::normalize(glm::cross(Orientation, Up));
-        std::cout << "d pressed" << std::endl;
+        //std::cout << "d pressed" << std::endl;
     }
 
     if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS)
     {
         Position += frameSpeed * deltaTime * Up;
-        std::cout << "SPACE PRESSED" << std::endl;
+        //std::cout << "SPACE PRESSED" << std::endl;
     }
 
     if (glfwGetKey(window, GLFW_KEY_LEFT_CONTROL) == GLFW_PRESS)

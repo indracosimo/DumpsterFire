@@ -4,13 +4,15 @@
 #include <string>
 #include <iostream>
 #include <glm/glm.hpp>
+#include <graphics/renderer.h>
 
 enum class MessageType 
 {
 	RAYCAST,
 	STRING,
 	FLOAT,
-	MOUSE
+	MOUSE,
+	SPAWNED_CUBES
 	//to do
 	//error message
 	//request message
@@ -81,6 +83,18 @@ public:
 private:
 	int x, y;
 	bool bClicked;
+};
+
+class CubeSpawnedMessage : public MessageManager
+{
+public:
+	CubeSpawnedMessage(const CubeTransform& cube);
+
+	void processMessage() const override;
+	CubeTransform getCubeData() const;
+
+private:
+	CubeTransform cubeData;
 };
 
 #endif // MESSAGEMANAGER_H
