@@ -4,6 +4,7 @@
 #include "input.h"
 #include "core/camera.h"
 #include <glad/glad.h>
+#include "../../MessageManager.h"
 
 bool bWireFramez = false;
 bool bEnableCRT = false;
@@ -39,12 +40,19 @@ void processInput(GLFWwindow* window)
 
 void camera::Inputs(GLFWwindow* window, float deltaTime)
 {
+	//Mouse message processing
+    double mouseX, mouseY;
+    glfwGetCursorPos(window, &mouseX, &mouseY);
 
     ImGuiIO& io = ImGui::GetIO();
     if (io.WantCaptureMouse || io.WantCaptureKeyboard)
     {
         return;
     }
+	//Process mouse message
+    bool bIsMouseClicked = (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS);
+    MouseMessage mouseMsg(static_cast<int>(mouseX), static_cast<int>(mouseY), bIsMouseClicked);
+    mouseMsg.processMessage();
 
     float frameSpeed = speed;
     if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)

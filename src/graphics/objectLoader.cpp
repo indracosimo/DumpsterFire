@@ -18,7 +18,7 @@ mesh objectLoader::loadOBJ(const std::string& filepath)
         std::cerr << "Failed to open OBJ: " << filepath << std::endl;
         return mesh(std::vector<float>());
     }
-    std::cerr << "Successfully opened OBJ: " << filepath << std::endl;
+    //std::cerr << "Successfully opened OBJ: " << filepath << std::endl;
     std::string line;
     while (std::getline(file, line))
     {
@@ -26,17 +26,20 @@ mesh objectLoader::loadOBJ(const std::string& filepath)
         std::string type;
         ss >> type;
 
-        if (type == "v") {
+        if (type == "v") 
+        {
             glm::vec3 v;
             ss >> v.x >> v.y >> v.z;
             positions.push_back(v);
         }
-        else if (type == "vt") {
+        else if (type == "vt") 
+        {
             glm::vec2 t;
             ss >> t.x >> t.y;
             texcoords.push_back(t);
         }
-        else if (type == "vn") {
+        else if (type == "vn") 
+        {
             glm::vec3 n;
             ss >> n.x >> n.y >> n.z;
             normals.push_back(n);
@@ -50,6 +53,7 @@ mesh objectLoader::loadOBJ(const std::string& filepath)
 
                 int p = 0, t = 0, n = 0;
                 // detect format
+				// if no slashes only p(position) is parsed, if double slashes p and n(position and normal), else all 3 are parsed
                 if (vert.find('/') == std::string::npos)
                 {
                     p = std::stoi(vert);

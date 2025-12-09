@@ -4,6 +4,7 @@
 #include <glad/glad.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include "objectLoader.h"
 
 
 
@@ -100,6 +101,7 @@ void renderer::loadTextures()
 
 void renderer::render(const std::vector<CubeTransform>& cubes) 
 {
+	mesh planeMesh = objectLoader::loadOBJ("assets/obj/Plane.obj");
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	//glBindFramebuffer(GL_FRAMEBUFFER, bEnableCRT ? framebuffer : 0);
 	glEnable(GL_DEPTH_TEST);
@@ -129,6 +131,8 @@ void renderer::render(const std::vector<CubeTransform>& cubes)
 		mainShader->setMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 	}
+
+	planeMesh.DrawMesh();
 
 	glBindVertexArray(0);
 

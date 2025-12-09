@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-#include "mesh.h"
+#include "graphics/renderer.h"
 
 namespace objectLoader
 {

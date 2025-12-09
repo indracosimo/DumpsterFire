@@ -138,6 +138,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MessageManager.cpp" />
+    <ClCompile Include="MessageQueue.cpp" />
     <ClCompile Include="src\graphics\objectLoader.cpp" />
     <ClCompile Include="src\graphics\geometry.cpp" />
     <ClCompile Include="src\graphics\renderer.cpp" />
@@ -160,6 +162,8 @@
     <ClCompile Include="src\ui\uiManager.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MessageManager.h" />
+    <ClInclude Include="MessageQueue.h" />
     <ClInclude Include="src\graphics\mesh.h" />
     <ClInclude Include="src\graphics\objectLoader.h" />
     <ClInclude Include="src\graphics\geometry.h" />
