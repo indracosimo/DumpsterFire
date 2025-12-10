@@ -166,6 +166,7 @@
     <ClInclude Include="MemoryChecker.h" />
     <ClInclude Include="MessageManager.h" />
     <ClInclude Include="MessageQueue.h" />
+    <ClInclude Include="src\DebugLogger.h" />
     <ClInclude Include="src\graphics\objectLoader.h" />
     <ClInclude Include="src\graphics\geometry.h" />
     <ClInclude Include="src\graphics\renderer.h" />
