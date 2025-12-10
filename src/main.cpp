@@ -33,14 +33,13 @@ int main()
     //mouseMsg.processMessage();
     //Message Manager testing
 
-	app.Run();
 
     //while (true) 
     //{
     //    messageQueue.processMessage();
     //}
 
-
+    app.Run();
 
     return 0;
 }

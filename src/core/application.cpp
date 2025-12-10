@@ -11,6 +11,7 @@
 #include <vector>
 #include "../MessageManager.h"
 #include "../MessageQueue.h"
+#include "../../MemoryChecker.h"
 
 extern GLFWwindow* window;
 
@@ -89,6 +90,23 @@ void application::Run()
 
         processInput(window);
         camera.Inputs(window, deltaTime);
+
+        //check memory status
+		MemoryChecker status = queryMemoryStatus();
+		const uint64_t safetyMarginBytes = 1024 * 1024 * 1024; // 50 MB
+
+        if(status.availablePhysicalMemoryBytes < safetyMarginBytes)
+        {
+            std::cerr << "Warning: Low physical memory available!" << std::endl;
+            std::cerr << "Total Physical Memory: " << status.totalPhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+            std::cerr << "Available Physical Memory: " << status.availablePhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        }
+        else
+        {
+            std::cout << "Memory Status: " << std::endl;
+            std::cout << "Total Physical Memory: " << status.totalPhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+            std::cout << "Available Physical Memory: " << status.availablePhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        }
 
         uiManager.BeginFrame();
 
