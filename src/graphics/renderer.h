@@ -11,6 +11,8 @@ struct CubeTransform //Entity transform data
     glm::vec3 rotation{ 0.0f };
     glm::vec3 scale{ 1.0f };
 
+	std::string meshPath;
+
 	unsigned int textureID = 0;
 	std::string texturePath;
 };

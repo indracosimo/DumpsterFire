@@ -162,6 +162,15 @@ void uiManager::RenderCubeControls(std::vector<CubeTransform>& cubes, int& selec
             {
                 cube.name = std::string(cubeNameBuffer.data());
             }
+            //load mesh via obj
+            static char meshPathBuffer[256];
+            strncpy_s(meshPathBuffer, cube.meshPath.c_str(), sizeof(meshPathBuffer));
+            if (ImGui::InputText("Mesh Path (.obj)", meshPathBuffer, sizeof(meshPathBuffer)))
+            {
+                cube.meshPath = meshPathBuffer;
+            }
+
+            
             ImGui::DragFloat3("Position", &cube.position.x, 0.1f, -10.0f, 999.0f);
             ImGui::DragFloat3("Rotation", &cube.rotation.x, 1.0f, 0.0f, 360.0f);
             ImGui::DragFloat3("Scale", &cube.scale.x, 0.1f, 0.1f, 999.0f);

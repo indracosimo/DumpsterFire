@@ -114,11 +114,12 @@ void renderer::render(const std::vector<CubeTransform>& cubes)
 
 	glActiveTexture(GL_TEXTURE0);
 	// glBindTexture(GL_TEXTURE_2D, texture1);
-	glBindVertexArray(VAO);
+	//glBindVertexArray(VAO);
 
 	for (const auto& cube : cubes)
 	{
 		glBindTexture(GL_TEXTURE_2D, cube.textureID);
+		
 		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 projection = glm::perspective(glm::radians(45.0f),
 			float(SCR_WIDTH) / SCR_HEIGHT,
@@ -132,8 +133,24 @@ void renderer::render(const std::vector<CubeTransform>& cubes)
 		mainShader->setMat4("projection", projection);
 		mainShader->setMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		Mesh* meshToDraw = nullptr;
+		if (!cube.meshPath.empty())
+		{
+			meshToDraw = MeshManager::GetInstance().GetMesh(cube.meshPath);
+		}
+
+		if (meshToDraw && meshToDraw->vertexCount > 0)
+		{
+			meshToDraw->DrawMesh();
+		}
+		else
+		{
+			glBindVertexArray(VAO);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 	}
-	planeMesh->DrawMesh();
+	//planeMesh->DrawMesh();
 
 
 	glBindVertexArray(0);
