@@ -14,7 +14,7 @@ uniform mat4 camMatrix;
 
 void main()
 {
-    gl_Position = projection * view * model * vec4(aPos, 1.0);
+    gl_Position = camMatrix * model * vec4(aPos, 1.0);
     TexCoord = aTexCoord;
     ourColor = aColor; // set ourColor to the input color we got from the vertex data
 }

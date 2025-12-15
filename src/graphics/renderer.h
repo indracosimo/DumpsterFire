@@ -10,6 +10,9 @@ struct CubeTransform //Entity transform data
     glm::vec3 position{ 0.0f };
     glm::vec3 rotation{ 0.0f };
     glm::vec3 scale{ 1.0f };
+
+	unsigned int textureID = 0;
+	std::string texturePath;
 };
 
 class renderer
@@ -34,13 +37,13 @@ private:
 
 	void DrawMesh();
 };
-	class mesh
+	class Mesh
 	{
 	public:
 		unsigned int VAO, VBO;
 		int vertexCount;
 
-		mesh(const std::vector<float>& vertices)
+		Mesh(const std::vector<float>& vertices)
 		{
 			vertexCount = vertices.size() / 8;
 			glGenVertexArrays(1, &VAO);

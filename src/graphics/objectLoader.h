@@ -4,6 +4,6 @@
 
 namespace objectLoader
 {
-	mesh loadOBJ(const std::string& filepath);
+	Mesh loadOBJ(const std::string& filepath);
 }
 

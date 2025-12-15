@@ -19,19 +19,7 @@ MemoryChecker queryMemoryStatus()
 	}
 	return status;
 }
-
-
-
 #endif
-
-//Can be extended for other platforms such as linux or macOS
-//Generic implementation for unsupported platforms
-// MemoryChecker queryMemoryStatus()
-// {
-//		MemoryChecker status;
-// 		return status;
-// }
-
 
 bool bCanAllocateBytes(uint64_t bytesToAllocate)
 {

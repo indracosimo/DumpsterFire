@@ -139,6 +139,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="MemoryChecker.cpp" />
+    <ClCompile Include="MeshManager.cpp" />
     <ClCompile Include="MessageManager.cpp" />
     <ClCompile Include="MessageQueue.cpp" />
     <ClCompile Include="src\graphics\objectLoader.cpp" />
@@ -164,6 +165,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryChecker.h" />
+    <ClInclude Include="MeshManager.h" />
     <ClInclude Include="MessageManager.h" />
     <ClInclude Include="MessageQueue.h" />
     <ClInclude Include="src\DebugLogger.h" />

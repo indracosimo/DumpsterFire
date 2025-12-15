@@ -12,8 +12,10 @@
 #include "../MessageManager.h"
 #include "../MessageQueue.h"
 #include "../../MemoryChecker.h"
+#include "../../MeshManager.h"
 
 extern GLFWwindow* window;
+
 
 application::application(const Resolution& res, const char* title)
     : SCR_WIDTH(res.width), SCR_HEIGHT(res.height), window(nullptr)
@@ -69,9 +71,11 @@ void application::setupCallbacks()
 
 void application::Run()
 {
+    MeshManager::Allocate();
     camera camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0, 0, 2));
     renderer renderer(SCR_WIDTH, SCR_HEIGHT);
     uiManager uiManager;
+	float FOV = 45.0f;
 
     uiManager.Initialize(window);
 
@@ -96,31 +100,31 @@ void application::Run()
         MemoryChecker status = queryMemoryStatus();
         const uint64_t safetyMarginBytes = 1024 * 1024 * 1024; // 1 GB
         //Physical Memory Check
-        if (status.availablePhysicalMemoryBytes < safetyMarginBytes)
-        {
-            std::cerr << "Warning: Low physical memory available!" << std::endl;
-            std::cerr << "Total Physical Memory: " << status.totalPhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-            std::cerr << "Available Physical Memory: " << status.availablePhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-        }
-        else
-        {
-            std::cout << "Memory Status: " << std::endl;
-            std::cout << "Total Physical Memory: " << status.totalPhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-            std::cout << "Available Physical Memory: " << status.availablePhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-        }
-        //Virtual Memory Check
-        if (status.availableVirtualMemoryBytes < safetyMarginBytes)
-        {
-            std::cerr << "Warning: Low virtual memory available!" << std::endl;
-            std::cerr << "Total Virtual Memory: " << status.totalVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-            std::cerr << "Available Virtual Memory: " << status.availableVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-        }
-        else
-        {
-            std::cout << "Memory Status: " << std::endl;
-            std::cout << "Total Virtual Memory: " << status.totalVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-            std::cout << "Available Virtual Memory: " << status.availableVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-        }
+        //if (status.availablePhysicalMemoryBytes < safetyMarginBytes)
+        //{
+        //    std::cerr << "Warning: Low physical memory available!" << std::endl;
+        //    std::cerr << "Total Physical Memory: " << status.totalPhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        //    std::cerr << "Available Physical Memory: " << status.availablePhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        //}
+        //else
+        //{
+        //    std::cout << "Memory Status: " << std::endl;
+        //    std::cout << "Total Physical Memory: " << status.totalPhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        //    std::cout << "Available Physical Memory: " << status.availablePhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        //}
+        ////Virtual Memory Check
+        //if (status.availableVirtualMemoryBytes < safetyMarginBytes)
+        //{
+        //    std::cerr << "Warning: Low virtual memory available!" << std::endl;
+        //    std::cerr << "Total Virtual Memory: " << status.totalVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        //    std::cerr << "Available Virtual Memory: " << status.availableVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        //}
+        //else
+        //{
+        //    std::cout << "Memory Status: " << std::endl;
+        //    std::cout << "Total Virtual Memory: " << status.totalVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        //    std::cout << "Available Virtual Memory: " << status.availableVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        //}
 #pragma endregion
 
 
@@ -133,6 +137,7 @@ void application::Run()
         //uiManager.RenderDocking();
 
         uiManager.RenderCubeControls(cubes, selectedCubeIndex, newCube);
+		uiManager.RenderCameraControls(camera, FOV);
         {
             ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
             ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
@@ -144,7 +149,7 @@ void application::Run()
         }
 
         renderer.mainShader->use();
-        camera.Matrix(45.0f, 0.1f, 100.0f, *renderer.mainShader, "cameraMatrix");
+        camera.Matrix(FOV, 0.1f, 100.0f, *renderer.mainShader, "camMatrix");
 
         //planeMesh.DrawMesh();
 

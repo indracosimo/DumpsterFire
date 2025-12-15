@@ -1,6 +1,7 @@
 #ifndef CAMERA_CLASS_H
 #define CAMERA_CLASS_H
 #define GLFW_INCLUDE_NONE
+#define GLM_ENABLE_EXPERIMENTAL
 #include "shaders/shader.h"
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>

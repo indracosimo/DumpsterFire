@@ -5,6 +5,9 @@
 #include <GLFW/glfw3.h>
 #include <string>
 #include "../../MessageQueue.h"
+#include "graphics/textureLoader.h"
+#include "graphics/renderer.h"
+#include <core/camera.h>
 
 extern GLFWwindow* window;
  
@@ -75,8 +78,7 @@ void uiManager::EndFrame()
 }
 
 #pragma region Cube Controls
-void uiManager::RenderCubeControls(std::vector<CubeTransform>& cubes, int& selectedCubeIndex,
-    CubeTransform& newCubeTransform)
+void uiManager::RenderCubeControls(std::vector<CubeTransform>& cubes, int& selectedCubeIndex, CubeTransform& newCubeTransform)
 {
     ImGui::Begin("Cube Controls");
     ImGui::Text("Total Cubes: %d", static_cast<int>(cubes.size()));
@@ -95,6 +97,9 @@ void uiManager::RenderCubeControls(std::vector<CubeTransform>& cubes, int& selec
             newCubeTransform.name = "Nameless Cube " + std::to_string(cubes.size());
         }
 
+        newCubeTransform.texturePath = "assets/images/concrete.jpg";
+        newCubeTransform.textureID = loadTexture(newCubeTransform.texturePath.c_str());
+        
         cubes.push_back(newCubeTransform);
         selectedCubeIndex = static_cast<int>(cubes.size()) - 1;
 
@@ -136,6 +141,16 @@ void uiManager::RenderCubeControls(std::vector<CubeTransform>& cubes, int& selec
         if (selectedCubeIndex >= 0 && selectedCubeIndex < cubes.size())
         {
             CubeTransform& cube = cubes[selectedCubeIndex];
+            //texture loading in runtime stuff
+            //exposes cubes texture path in ui, path is updated by user and the texture is reloaded during runtime
+            static char texturePathBuffer[256];
+            strncpy_s(texturePathBuffer, cube.texturePath.c_str(), sizeof(texturePathBuffer));
+            if (ImGui::InputText("Texture Path", texturePathBuffer, sizeof(texturePathBuffer)))
+            {
+                cube.texturePath = texturePathBuffer;
+                cube.textureID = loadTexture(cube.texturePath.c_str());
+            }
+            //texure
             std::vector<char> cubeNameBuffer(cube.name.begin(), cube.name.end());
             cubeNameBuffer.resize(256);
 
@@ -182,6 +197,25 @@ void uiManager::RenderCubeControls(std::vector<CubeTransform>& cubes, int& selec
 }
 #pragma endregion
 
+#pragma region Camera Controls
+void uiManager::RenderCameraControls(camera& camera, float& FOV)
+{
+	ImGui::Begin("Camera Controls");
+
+	ImGui::SliderFloat("FOV", &FOV, 30.0f, 120.0f, "%.1f degree");
+
+    ImGui::Text("Position");
+    ImGui::DragFloat3("Camera Position", &camera.Position.x, 0.1f, -50.0f, 50.0f);
+
+    ImGui::Text("Orientation:");
+    ImGui::DragFloat3("Camera Orientation", &camera.Orientation.x, 0.1f, -1.0f, 1.0f);
+
+    ImGui::Text("Up Vector:");
+    ImGui::DragFloat3("Up", &camera.Up.x, 0.1f, -1.0f, 1.0f);
+
+    ImGui::End();
+}
+#pragma endregion
 //void uiManager::RenderDocking()
 //{
 //    ImGuiIO& io = ImGui::GetIO();

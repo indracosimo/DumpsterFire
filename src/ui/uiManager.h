@@ -2,7 +2,7 @@
 #include "graphics/renderer.h"
 #include "../MessageManager.h"
 #include <vector>
-
+#include "core/camera.h"
 struct ImGuiIO;
 struct GLFWwindow;
 
@@ -21,15 +21,16 @@ public:
     void EndFrame();
 
     void RenderCubeControls(std::vector<CubeTransform>& cubes, int& selectedCubeIndex, CubeTransform& newCubeTransform);
-    void RenderDocking();
 
-    bool bInitialized;
+	void RenderCameraControls(camera& camera, float& FOV);
 
-    void init()
-    {
-        if (!bInitialized)
-        {
-            bInitialized = true;
-        }
-    }
+    bool bInitialized = false;
+
+    //void init()
+    //{
+    //    if (!bInitialized)
+    //    {
+    //        bInitialized = true;
+    //    }
+    //}
 };

@@ -5,7 +5,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-mesh objectLoader::loadOBJ(const std::string& filepath)
+Mesh objectLoader::loadOBJ(const std::string& filepath)
 {
     std::vector<glm::vec3> positions;
     std::vector<glm::vec2> texcoords;
@@ -16,7 +16,7 @@ mesh objectLoader::loadOBJ(const std::string& filepath)
     std::ifstream file(filepath);
     if (!file.is_open()) {
         std::cerr << "Failed to open OBJ: " << filepath << std::endl;
-        return mesh(std::vector<float>());
+        return Mesh(std::vector<float>());
     }
     //std::cerr << "Successfully opened OBJ: " << filepath << std::endl;
     std::string line;
@@ -85,6 +85,6 @@ mesh objectLoader::loadOBJ(const std::string& filepath)
         }
     }
 
-    return mesh(finalVertices);
+    return Mesh(finalVertices);
 
 }
