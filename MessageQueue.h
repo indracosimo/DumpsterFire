@@ -15,7 +15,10 @@ public:
 
 	void push(std::unique_ptr<MessageManager> message);
 
-	void processMessage();
+	bool bIsMessageProcessed();
+
+	std::size_t processAllMessages();
+	// void processMessage();
 
 
 private:
@@ -23,4 +26,4 @@ private:
 	std::mutex mutex;
 };
 extern MessageQueue g_messageQueue; //declares a global message queue so we can use it in other scripts
-#endif MESSAGEQUEUE_H
+#endif

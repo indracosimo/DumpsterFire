@@ -100,31 +100,31 @@ void application::Run()
         MemoryChecker status = queryMemoryStatus();
         const uint64_t safetyMarginBytes = 1024 * 1024 * 1024; // 1 GB
         //Physical Memory Check
-        //if (status.availablePhysicalMemoryBytes < safetyMarginBytes)
-        //{
-        //    std::cerr << "Warning: Low physical memory available!" << std::endl;
-        //    std::cerr << "Total Physical Memory: " << status.totalPhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-        //    std::cerr << "Available Physical Memory: " << status.availablePhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-        //}
-        //else
-        //{
-        //    std::cout << "Memory Status: " << std::endl;
-        //    std::cout << "Total Physical Memory: " << status.totalPhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-        //    std::cout << "Available Physical Memory: " << status.availablePhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-        //}
-        ////Virtual Memory Check
-        //if (status.availableVirtualMemoryBytes < safetyMarginBytes)
-        //{
-        //    std::cerr << "Warning: Low virtual memory available!" << std::endl;
-        //    std::cerr << "Total Virtual Memory: " << status.totalVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-        //    std::cerr << "Available Virtual Memory: " << status.availableVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-        //}
-        //else
-        //{
-        //    std::cout << "Memory Status: " << std::endl;
-        //    std::cout << "Total Virtual Memory: " << status.totalVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-        //    std::cout << "Available Virtual Memory: " << status.availableVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
-        //}
+        if (status.availablePhysicalMemoryBytes < safetyMarginBytes)
+        {
+            std::cerr << "Warning: Low physical memory available!" << std::endl;
+            std::cerr << "Total Physical Memory: " << status.totalPhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+            std::cerr << "Available Physical Memory: " << status.availablePhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        }
+        else
+        {
+            std::cout << "Memory Status: " << std::endl;
+            std::cout << "Total Physical Memory: " << status.totalPhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+            std::cout << "Available Physical Memory: " << status.availablePhysicalMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        }
+        //Virtual Memory Check
+        if (status.availableVirtualMemoryBytes < safetyMarginBytes)
+        {
+            std::cerr << "Warning: Low virtual memory available!" << std::endl;
+            std::cerr << "Total Virtual Memory: " << status.totalVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+            std::cerr << "Available Virtual Memory: " << status.availableVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        }
+        else
+        {
+            std::cout << "Memory Status: " << std::endl;
+            std::cout << "Total Virtual Memory: " << status.totalVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+            std::cout << "Available Virtual Memory: " << status.availableVirtualMemoryBytes / (1024 * 1024 * 1024) << " GB" << std::endl;
+        }
 #pragma endregion
 
 
@@ -132,7 +132,7 @@ void application::Run()
         uiManager.BeginFrame();
 
 	//process messages
-		g_messageQueue.processMessage();
+		g_messageQueue.processAllMessages();
 
         //uiManager.RenderDocking();
 
