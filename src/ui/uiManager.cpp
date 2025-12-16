@@ -150,7 +150,7 @@ void uiManager::RenderCubeControls(std::vector<CubeTransform>& cubes, int& selec
                 cube.texturePath = texturePathBuffer;
                 cube.textureID = loadTexture(cube.texturePath.c_str());
             }
-            //texure
+
             std::vector<char> cubeNameBuffer(cube.name.begin(), cube.name.end());
             cubeNameBuffer.resize(256);
 

@@ -22,5 +22,5 @@ private:
 	std::queue<std::unique_ptr<MessageManager>> queue;
 	std::mutex mutex;
 };
-extern MessageQueue g_messageQueue; //declares a global message queue
+extern MessageQueue g_messageQueue; //declares a global message queue so we can use it in other scripts
 #endif MESSAGEQUEUE_H

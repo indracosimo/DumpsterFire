@@ -1,7 +1,6 @@
 #include "MessageManager.h"
 
-MessageManager::MessageManager(MessageType type, const std::string& message)
-    : type(type), message(message) {}
+MessageManager::MessageManager(MessageType type, const std::string& message) : type(type), message(message) {}
 
 MessageManager::~MessageManager() {}
 
@@ -15,10 +14,9 @@ std::string MessageManager::getMessage() const
     return message;
 }
 
-//RaycastMessage Definitions
+//RaycastMessage 
 RaycastMessage::RaycastMessage(const glm::vec3& startPos, const glm::vec3& direction, float maxDistance)
-    : MessageManager(MessageType::RAYCAST), startPos(startPos), direction(direction), maxDistance(maxDistance)
-{}
+    : MessageManager(MessageType::RAYCAST), startPos(startPos), direction(direction), maxDistance(maxDistance) {}
 
 
 void RaycastMessage::processMessage() const
@@ -53,8 +51,7 @@ void StringMessage::processMessage() const
 }
 
 //FloatMessage 
-FloatMessage::FloatMessage(float value)
-    : MessageManager(MessageType::FLOAT, std::to_string(value)), value(value) {}
+FloatMessage::FloatMessage(float value) : MessageManager(MessageType::FLOAT, std::to_string(value)), value(value) {}
 
 void FloatMessage::processMessage() const
 {
@@ -74,20 +71,19 @@ void MouseMessage::processMessage() const
     std::cout << "Mouse message: Position (" << x << ", " << y << "), Clicked: " << (bClicked ? "Yes" : "No") << std::endl;
 }
 
-//Cube Soawned Message
-CubeSpawnedMessage::CubeSpawnedMessage(const CubeTransform& cube) : MessageManager(MessageType::SPAWNED_CUBES), cubeData(cube)
-{}
+//CubeSoawnedMessage
+CubeSpawnedMessage::CubeSpawnedMessage(const CubeTransform& cube) : MessageManager(MessageType::SPAWNED_CUBES), cubeData(cube) {}
 
 void CubeSpawnedMessage::processMessage() const
 {
 	std::cout << "Cube Spawned: "
-		<< "Name: " << cubeData.name << ", "
-		<< "Position: (" << cubeData.position.x << ", "
-		<< cubeData.position.y << ", " << cubeData.position.z << ")"
-        << "Rotation: (" << cubeData.rotation.x << ", "
-		<< cubeData.rotation.y << ", " << cubeData.rotation.z << ")"
-		<< "Scale: (" << cubeData.scale.x << ", " << cubeData.scale.y << ", " << cubeData.scale.z << ")"
-		<< std::endl;
+	<< "Name: " << cubeData.name << ", "
+	<< "Position: (" << cubeData.position.x << ", "
+	<< cubeData.position.y << ", " << cubeData.position.z << ")"
+    << "Rotation: (" << cubeData.rotation.x << ", "
+	<< cubeData.rotation.y << ", " << cubeData.rotation.z << ")"
+	<< "Scale: (" << cubeData.scale.x << ", " << cubeData.scale.y << ", " << cubeData.scale.z << ")"
+	<< std::endl;
 }
 
 CubeTransform CubeSpawnedMessage::getCubeData() const
