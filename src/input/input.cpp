@@ -54,7 +54,6 @@ void camera::Inputs(GLFWwindow* window, float deltaTime)
         return;
     }
 	//Process mouse message
-    // MouseMessage mouseMsg(static_cast<int>(mouseX), static_cast<int>(mouseY), bIsMouseClicked);
     g_messageQueue.push(std::make_unique<MouseMessage>(static_cast<int>(mouseX), static_cast<int>(mouseY), bIsMouseClicked));
 
     float frameSpeed = speed;
