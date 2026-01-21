@@ -138,7 +138,6 @@ void application::Run()
 
         uiManager.RenderCubeControls(cubes, selectedCubeIndex, newCube);
 		uiManager.RenderCameraControls(camera, FOV);
-        
         {
             ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Always);
             ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_AlwaysAutoResize |
