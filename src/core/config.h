@@ -1,4 +1,5 @@
 #pragma once
+
 struct Resolution 
 {
 	int width;

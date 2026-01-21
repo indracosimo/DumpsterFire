@@ -13,6 +13,8 @@
 #include "../MessageQueue.h"
 #include "../../MemoryChecker.h"
 #include "../../MeshManager.h"
+#include "ui/Viewport.h"
+#include "globals.h"
 
 extern GLFWwindow* window;
 
@@ -28,6 +30,9 @@ application::application(const Resolution& res, const char* title)
         glfwTerminate();
         exit(-1);
     }
+
+    ::window = window;
+    
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1);
     initGLAD();
@@ -75,9 +80,15 @@ void application::Run()
     camera camera(SCR_WIDTH, SCR_HEIGHT, glm::vec3(0, 0, 2));
     renderer renderer(SCR_WIDTH, SCR_HEIGHT);
     uiManager uiManager;
+    uiManager.Initialize(window);
 	float FOV = 45.0f;
 
-    uiManager.Initialize(window);
+    uiManager.AddViewport(glm::vec3(0, 0, 2));
+    uiManager.AddViewport(glm::vec3(2, 2, 2));
+
+    //assign scene viewport
+    auto& sceneViewports = uiManager.GetViewports();
+    std::shared_ptr<Viewport> sceneViewport = sceneViewports.empty() ? nullptr : sceneViewports[0];
 
     std::vector<CubeTransform> cubes;
     CubeTransform newCube;
@@ -130,7 +141,11 @@ void application::Run()
 
 
         uiManager.BeginFrame();
-
+        
+        uiManager.RenderDockingLayout();
+        
+        uiManager.RenderViewports(cubes, FOV, window);
+        
 	//process messages
 		g_messageQueue.processAllMessages();
 
@@ -149,12 +164,18 @@ void application::Run()
             ImGui::End();
         }
 
-        renderer.mainShader->use();
-        camera.Matrix(FOV, 0.1f, 100.0f, *renderer.mainShader, "camMatrix");
+        // renderer.mainShader->use();
+        // camera.Matrix(FOV, 0.1f, 100.0f, *renderer.mainShader, "camMatrix");
 
         //planeMesh.DrawMesh();
 
-        renderer.render(cubes);
+        // renderer.render(cubes);
+
+        // if (sceneViewport)
+        // {
+        //     sceneViewport->Update(deltaTime, window);
+        //     sceneViewport->RenderScene(cubes, camera, FOV);
+        // }
         uiManager.EndFrame();
 
         glfwSwapBuffers(window);

@@ -2,14 +2,14 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "uiManager.h"
+#include "Viewport.h"
 #include <GLFW/glfw3.h>
 #include <string>
 #include "../../MessageQueue.h"
 #include "graphics/textureLoader.h"
 #include "graphics/renderer.h"
 #include <core/camera.h>
-
-extern GLFWwindow* window;
+#include "core/globals.h"
  
 uiManager::uiManager() 
 {
@@ -26,12 +26,17 @@ uiManager::~uiManager()
 
 void uiManager::Initialize(GLFWwindow* window)
 {
+    if (bInitialized)
+    {
+        return;
+    }
+    
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     io.FontGlobalScale = 1.0f;
     (void)io;
-    //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   
     //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
     //ImGuiStyle& style = ImGui::GetStyle();
@@ -225,30 +230,72 @@ void uiManager::RenderCameraControls(camera& camera, float& FOV)
     ImGui::End();
 }
 #pragma endregion
-//void uiManager::RenderDocking()
-//{
-//    ImGuiIO& io = ImGui::GetIO();
-//    if (!(io.ConfigFlags & ImGuiConfigFlags_DockingEnable))
-//        return;
-//
-//    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse |
-//        ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-//        ImGuiWindowFlags_NoBringToFrontOnFocus |
-//        ImGuiWindowFlags_NoNavFocus;
-//
-//    ImGuiViewport* viewport = ImGui::GetMainViewport();
-//    ImGui::SetNextWindowPos(viewport->WorkPos);
-//    ImGui::SetNextWindowSize(viewport->WorkSize);
-//    ImGui::SetNextWindowViewport(viewport->ID);
-//
-//    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-//    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-//
-//    ImGui::Begin("DockSpace Main Window", nullptr, window_flags);
-//    ImGui::PopStyleVar(2);
-//
-//    ImGuiID dockspace_id = ImGui::GetID("MainDockSpace");
-//    ImGui::DockSpace(dockspace_id, ImVec2(0, 0), ImGuiDockNodeFlags_PassthruCentralNode);
-//
-//    ImGui::End();
-//}
+
+
+void uiManager::RenderDockingLayout()
+{
+    ImGuiIO& io = ImGui::GetIO();
+    if (!(io.ConfigFlags & ImGuiConfigFlags_DockingEnable))
+        return;
+
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse |
+        ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
+        ImGuiWindowFlags_NoBringToFrontOnFocus |
+        ImGuiWindowFlags_NoNavFocus;
+
+    ImGuiViewport* viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->WorkPos);
+    ImGui::SetNextWindowSize(viewport->WorkSize);
+    ImGui::SetNextWindowViewport(viewport->ID);
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+
+    ImGui::Begin("DockSpace Main Window", nullptr, window_flags);
+    ImGui::PopStyleVar(2);
+
+    ImGuiID dockspace_id = ImGui::GetID("MainDockSpace");
+    ImGui::DockSpace(dockspace_id, ImVec2(0, 0), ImGuiDockNodeFlags_PassthruCentralNode);
+
+    ImGui::End();
+}
+
+void uiManager::AddViewport(const glm::vec3& cameraPos)
+{
+    int viewportSize = 512;
+    auto newViewport = std::make_shared<Viewport>(viewportSize, viewportSize, cameraPos);
+    mViewports.push_back(newViewport);
+}
+
+void uiManager::RenderViewports(const std::vector<CubeTransform>& cubes, float FOV, GLFWwindow* window)
+{
+    for (size_t i = 0; i < mViewports.size(); ++i)
+    {
+        std::string windowTitle = (i == 0) ? "Scene" : "Viewport " + std::to_string(i);
+        ImGui::SetNextWindowSize(ImVec2(800, 600), ImGuiCond_FirstUseEver);
+        
+        if (ImGui::Begin(windowTitle.c_str()))
+        {
+            ImVec2 viewportSize = ImGui::GetContentRegionAvail();
+            
+            if (viewportSize.x > 0 && viewportSize.y > 0)
+            {
+                // resize viewport
+                if (mViewports[i]->GetFramebufferTexture() != 0)
+                {
+                    mViewports[i]->Resize((int)viewportSize.x, (int)viewportSize.y);
+                }
+
+                mViewports[i]->Update(0.016f, window);
+                // render viewport
+                mViewports[i]->RenderScene(cubes, FOV);
+
+                // display framebuffer texture in ImGui
+                ImGui::Image((void*)(intptr_t)mViewports[i]->GetFramebufferTexture(),
+                    ImVec2(viewportSize.x, viewportSize.y),
+                    ImVec2(0, 1), ImVec2(1, 0));
+            }
+        }
+        ImGui::End();
+    }
+}

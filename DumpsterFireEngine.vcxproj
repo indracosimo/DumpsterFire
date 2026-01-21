@@ -162,12 +162,14 @@
     <ClCompile Include="src\graphics\textureLoader.cpp" />
     <ClCompile Include="src\core\stb_image.cpp" />
     <ClCompile Include="src\ui\uiManager.cpp" />
+    <ClCompile Include="src\ui\Viewport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MemoryChecker.h" />
     <ClInclude Include="MeshManager.h" />
     <ClInclude Include="MessageManager.h" />
     <ClInclude Include="MessageQueue.h" />
+    <ClInclude Include="src\core\globals.h" />
     <ClInclude Include="src\DebugLogger.h" />
     <ClInclude Include="src\graphics\objectLoader.h" />
     <ClInclude Include="src\graphics\geometry.h" />
@@ -558,6 +560,7 @@
     <ClInclude Include="src\graphics\textureLoader.h" />
     <ClInclude Include="src\shaders\shader.h" />
     <ClInclude Include="src\ui\uiManager.h" />
+    <ClInclude Include="src\ui\Viewport.h" />
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Dependencies\entt\natvis\config.natvis" />

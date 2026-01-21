@@ -1,13 +1,14 @@
 #define GLM_ENABLE_EXPERIMENTAL
+#include "input.h"
+#include <glad/glad.h>
 #include "imgui.h"
 #include "imgui_internal.h"
-#include "input.h"
-#include "core/camera.h"
-#include <glad/glad.h>
 #include "../../MessageManager.h"
 #include "../../MessageQueue.h"
-
-extern GLFWwindow* window;
+#include "core/camera.h"
+#include "core/config.h"
+#include "core/globals.h"
+// extern GLFWwindow* window;
 
 bool bWireFramez = false;
 bool bEnableCRT = false;

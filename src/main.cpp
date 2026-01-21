@@ -3,7 +3,7 @@
 #include "../MessageManager.h"
 #include "../MessageQueue.h"
 
-extern GLFWwindow* window;
+struct GLFWwindow* window = nullptr;
 
 int main() 
 {
