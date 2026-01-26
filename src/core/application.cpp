@@ -149,11 +149,11 @@ void application::Run()
         }
 
         renderer.mainShader->use();
-        camera.Matrix(FOV, 0.1f, 100.0f, *renderer.mainShader, "camMatrix");
+        camera.Matrix(FOV, 0.1f, 100.0f, *renderer.mainShader, "modelMatrix", "viewMatrix", "projectionMatrix");
 
         //planeMesh.DrawMesh();
 
-        renderer.render(cubes);
+        renderer.render(cubes, camera);
         uiManager.EndFrame();
 
         glfwSwapBuffers(window);

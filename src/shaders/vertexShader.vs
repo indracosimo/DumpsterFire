@@ -1,20 +1,39 @@
 #version 330 core
-layout (location = 0) in vec3 aPos;      
-layout (location = 1) in vec2 aTexCoord; // use location 1 for texture coordinates
-layout (location = 2) in vec3 aColor;
 
-out vec3 ourColor; // output a color to the fragment shader
-out vec2 TexCoord;
+//matrices
+uniform mat4 modelMatrix = mat4(1);
+uniform mat4 viewMatrix = mat4(1);
+uniform mat4 projectionMatrix = mat4(1);;
+uniform mat4 normalMatrix = mat4(1);
+//uniform mat4 camMatrix = mat4(1);
 
-uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+//Camera
+uniform vec3 eyePosition = vec3(0.0f, 0.0f, 3.0f);
 
-uniform mat4 camMatrix;
+//vertex atributes from vao
+layout (location = 0) in vec3 in_Position;      
+layout (location = 1) in vec2 in_UV; // use location 1 for texture coordinates
+// layout (location = 2) in vec3 aColor;
+layout (location = 2) in vec3 in_Normal;
+
+//output to fragment shader
+out vec3 v_normal; 
+out vec2 UV_Coord;
+out vec3 position;
+out vec3 vecToEye;
 
 void main()
 {
-    gl_Position = camMatrix * model * vec4(aPos, 1.0);
-    TexCoord = aTexCoord;
-    ourColor = aColor; // set ourColor to the input color we got from the vertex data
+    mat4 mvp = projectionMatrix * viewMatrix * modelMatrix;
+    gl_Position = mvp * vec4(in_Position, 1.0);
+    
+    //transform to world space
+    position = (modelMatrix * vec4(in_Position, 1.0)).xyz;
+    
+    v_normal = normalize(mat3(normalMatrix) * in_Normal);
+
+    UV_Coord = in_UV;
+    
+    vecToEye = normalize(eyePosition - position);
+
 }

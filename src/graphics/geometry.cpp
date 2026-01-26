@@ -1,5 +1,7 @@
 #include "geometry.h"
 
+#include <vector>
+
 static float cubeVertices[] =
 {
     // positions          // texture coords   // colors

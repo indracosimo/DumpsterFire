@@ -32,7 +32,7 @@ public:
 
 	camera(int width, int height, glm::vec3 position);
 
-	void Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader, const char* uniform);
+	void Matrix(float FOVdeg, float nearPlane, float farPlane, Shader& shader,  const char* modelUniform, const char* viewUniform, const char* projectionUniform);
 	void Inputs(GLFWwindow* window, float deltaTime);
 };
 

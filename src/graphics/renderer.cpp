@@ -5,7 +5,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 #include "../MeshManager.h"
-
+#include "glm/gtc/type_ptr.hpp"
 
 
 renderer::renderer(unsigned int width, unsigned int height)
@@ -99,7 +99,7 @@ void renderer::loadTextures()
 	texture1 = loadTexture("assets/images/concrete.jpg");
 }
 
-void renderer::render(const std::vector<CubeTransform>& cubes) 
+void renderer::render(const std::vector<CubeTransform>& cubes, camera& cam) 
 {
 	Mesh* planeMesh = MeshManager::GetInstance().GetMesh("assets/obj/quadPlane.obj");
 
@@ -120,18 +120,34 @@ void renderer::render(const std::vector<CubeTransform>& cubes)
 	{
 		glBindTexture(GL_TEXTURE_2D, cube.textureID);
 		
+		// glm::mat4 model = glm::mat4(1.0f);
+		// glm::mat4 projection = glm::perspective(glm::radians(45.0f),
+		// 	float(SCR_WIDTH) / SCR_HEIGHT,
+		// 	0.1f, 9999.0f);
+		GLint texLoc = glGetUniformLocation(mainShader->ID, "texture1");
+		glUniform1i(texLoc, 0);
 		glm::mat4 model = glm::mat4(1.0f);
-		glm::mat4 projection = glm::perspective(glm::radians(45.0f),
-			float(SCR_WIDTH) / SCR_HEIGHT,
-			0.1f, 9999.0f);
 		model = glm::translate(model, cube.position);
 		model = glm::rotate(model, glm::radians(cube.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(cube.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::rotate(model, glm::radians(cube.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 		model = glm::scale(model, cube.scale);
 
-		mainShader->setMat4("projection", projection);
-		mainShader->setMat4("model", model);
+		GLint modelLoc = glGetUniformLocation(mainShader->ID, "modelMatrix");
+		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+		// Set lighting uniforms
+		GLint lightPosLoc = glGetUniformLocation(mainShader->ID, "lightPos");
+		glUniform3f(lightPosLoc, 10.0f, 25.0f, 15.0f);
+
+		GLint viewPosLoc = glGetUniformLocation(mainShader->ID, "viewPos");
+		glUniform3fv(viewPosLoc, 1, glm::value_ptr(cam.Position));  // Use camera position
+
+		GLint lightColorLoc = glGetUniformLocation(mainShader->ID, "lightColor");
+		glUniform3f(lightColorLoc, 1.0f, 0.9f, 0.8f);
+		
+		// mainShader->setMat4("projection", projection);
+		// mainShader->setMat4("model", model);
 		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		Mesh* meshToDraw = nullptr;
@@ -173,4 +189,77 @@ void renderer::render(const std::vector<CubeTransform>& cubes)
 	//	glDrawArrays(GL_TRIANGLES, 0, 6);
 	//	glBindVertexArray(0);
 	//}
+}
+
+
+void setupVertexBuffer(std::vector<Vertex>& vertices, GLuint& VAO, GLuint& VBO, GLuint vertexCount)
+{
+	vertexCount = vertices.size();
+	//gen and bind vao
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
+	//gen and bind vbo
+	glGenBuffers(1, &VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+
+	//location 0
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), 
+						 (void*)offsetof(Vertex, position));
+    
+	// texcoords location 1
+	glEnableVertexAttribArray(1);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+						 (void*)offsetof(Vertex, uv));
+    
+	// Normal location 2
+	glEnableVertexAttribArray(2);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex),
+						 (void*)offsetof(Vertex, normal));
+    
+	// unbind vao
+	glBindVertexArray(0);
+}
+
+void setupPhongUniforms(GLuint shaderProgram, const glm::mat4& model, const glm::mat4& view, const glm::vec4& projection)
+{
+	//  uniform locations
+	GLint modelLoc = glGetUniformLocation(shaderProgram, "modelMatrix");
+	GLint viewLoc = glGetUniformLocation(shaderProgram, "viewMatrix");
+	GLint projLoc = glGetUniformLocation(shaderProgram, "projectionMatrix");
+	GLint normalMatrixLoc = glGetUniformLocation(shaderProgram, "normalMatrix");
+	GLint eyePosLoc = glGetUniformLocation(shaderProgram, "eyePosition");
+    
+	glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+	glUniformMatrix4fv(viewLoc, 1, GL_FALSE, glm::value_ptr(view));
+	glUniformMatrix4fv(projLoc, 1, GL_FALSE, glm::value_ptr(projection));
+    
+	// calc and set normal matrix
+	glm::mat4 normalMatrix = glm::transpose(glm::inverse(model));
+	glUniformMatrix4fv(normalMatrixLoc, 1, GL_FALSE, glm::value_ptr(normalMatrix));
+    
+	// eye position
+	glm::vec3 eyePos(0.0f, 5.0f, 10.0f);
+	glUniform3fv(eyePosLoc, 1, glm::value_ptr(eyePos));
+    
+	//  lighting uniforms
+	GLint lightPosLoc = glGetUniformLocation(shaderProgram, "light_position");
+	glUniform3f(lightPosLoc, 10.0f, 25.0f, 15.0f);
+    
+	GLint lightAttLoc = glGetUniformLocation(shaderProgram, "light_attenuation");
+	glUniform3f(lightAttLoc, 1.0f, 0.1f, 0.01f);
+    
+	GLint ambientLoc = glGetUniformLocation(shaderProgram, "light_ambient");
+	glUniform4f(ambientLoc, 0.2f, 0.2f, 0.2f, 1.0f);
+    
+	GLint diffuseLoc = glGetUniformLocation(shaderProgram, "light_diffuse");
+	glUniform4f(diffuseLoc, 1.0f, 0.9f, 0.8f, 1.0f);
+    
+	GLint specularLoc = glGetUniformLocation(shaderProgram, "light_specular");
+	glUniform4f(specularLoc, 0.9f, 0.8f, 0.7f, 1.0f);
+    
+	GLint shineLoc = glGetUniformLocation(shaderProgram, "materialShininess");
+	glUniform1i(shineLoc, 32);
 }

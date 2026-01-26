@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+#include "core/camera.h"
+
 struct CubeTransform //Entity transform data
 {
     std::string name = "Nameless Cube";
@@ -22,7 +24,7 @@ class renderer
 public:
     renderer(unsigned int width, unsigned int height);
     ~renderer();
-    void render(const std::vector<CubeTransform>& cubes);
+    void render(const std::vector<CubeTransform>& cubes, camera& cam);
 
 	Shader* mainShader = nullptr;
 
@@ -59,10 +61,10 @@ private:
 			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 			glEnableVertexAttribArray(0);
 
-			// texcoords
+			// texcoords / uv
 			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
 			glEnableVertexAttribArray(1);
-			// color
+			// normals
 			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
 			glEnableVertexAttribArray(2);
 
