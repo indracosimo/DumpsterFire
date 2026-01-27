@@ -130,7 +130,9 @@ void application::Run()
 
 
         uiManager.BeginFrame();
-
+        LightManager& lightMGR = LightManager::GetInstance();
+        uiManager.RenderLightingControls(lightMGR);
+        
 	//process messages
 		g_messageQueue.processAllMessages();
 

@@ -161,6 +161,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\graphics\textureLoader.cpp" />
     <ClCompile Include="src\core\stb_image.cpp" />
+    <ClCompile Include="src\shaders\LightManager.cpp" />
     <ClCompile Include="src\ui\uiManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -556,6 +557,8 @@
     <ClInclude Include="src\input\input.h" />
     <ClInclude Include="src\core\config.h" />
     <ClInclude Include="src\graphics\textureLoader.h" />
+    <ClInclude Include="src\shaders\light.h" />
+    <ClInclude Include="src\shaders\LightManager.h" />
     <ClInclude Include="src\shaders\shader.h" />
     <ClInclude Include="src\ui\uiManager.h" />
   </ItemGroup>

@@ -1,13 +1,20 @@
 #version 330 core
+#define MAX_LIGHTS 16
+
+uniform vec4 global_ambient = vec4(0.2, 0.2, 0.2, 1.0);
 
 // lighting uniforms
-uniform vec3 light_position = vec3(10, 25, 15);
-uniform vec3 light_attenuation = vec3(1.0, 0.1, 0.01);
+uniform int activeLights = 1;
+uniform int light_type[MAX_LIGHTS];
+uniform vec3 light_position[MAX_LIGHTS];
+uniform vec3 light_direction[MAX_LIGHTS];
 
 // light color 
-uniform vec4 light_ambient = vec4(0.2, 0.2, 0.2, 1.0);
-uniform vec4 light_diffuse = vec4(1.0, 0.9, 0.8, 1.0);
-uniform vec4 light_specular = vec4(0.9, 0.8, 0.7, 1.0);
+uniform vec4 light_diffuse[MAX_LIGHTS];
+uniform vec4 light_specular[MAX_LIGHTS];
+uniform vec3 light_attenuation[MAX_LIGHTS];
+uniform float light_spotCutoff[MAX_LIGHTS];
+uniform int light_spotExponent[MAX_LIGHTS];
 
 // material properties
 uniform vec4 materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
@@ -35,33 +42,81 @@ void main()
     vec3 specularTexel = texture(specularMap, UV_Coord).rgb;    
     //
     // FragColor = materialAmbient * light_ambient * texel;
-    FragColor = vec4(0.0, 0.0, 0.0, albedoTexel.w);
+    vec3 normalizedNormal = normalize(v_normal);
+    vec3 viewDir = normalize(vecToEye);
 
-    vec3 normalizedNormal = normalize(v_normal);  
-    vec3 lightDirection = normalize(light_position - position);
+    FragColor = vec4(0.0, 0.0, 0.0, albedoTexel.a);
+
+    //vec3 lightDirection = normalize(light_position - position);
     
     //ambient    
-    FragColor.xyz += albedoTexel.xyz * materialAmbient.xyz * light_ambient.xyz;
+    FragColor.xyz += albedoTexel.xyz * materialAmbient.xyz * global_ambient.xyz;
 
+    for (int i = 0; i < activeLights; i++)
+    {
+        vec3 lightDirection = vec3(0.0);
+        float attenuation = 1.0;
+
+      //loop active lights
+    if (light_type[i] == 0)
+        {
+            // point light
+            vec3 LightPos = light_position[i] - position;
+            float distance = length(LightPos);
+            lightDirection = normalize(LightPos);
+            attenuation = 1.0 / (light_attenuation[i].x + light_attenuation[i].y * distance + light_attenuation[i].z * distance * distance);
+        }
+        else if (light_type[i] == 1)
+        {
+            // directional light
+            lightDirection = normalize(-light_direction[i]);
+            attenuation = 1.0;
+        }
+        else if (light_type[i] == 2)
+        {
+            // spotlight
+            vec3 LightPos = light_position[i] - position;
+            float distance = length(LightPos);
+            lightDirection = normalize(LightPos);
+            attenuation = 1.0 / (light_attenuation[i].x + light_attenuation[i].y * distance + light_attenuation[i].z * distance * distance);
+
+            float spotDot = dot(normalize(-light_direction[i]), lightDirection);
+            if (spotDot < light_spotCutoff[i])
+            {
+                attenuation = 0.0;
+            }
+            else
+            {
+                attenuation *= pow(spotDot, float(light_spotExponent[i]));
+            }
+        }
+        if (attenuation <= 0.0)
+            continue;
+        //diffuse / difIntensity FUCK DIF BAJEEEEEEEEEEEN
+        float viHatarDIFIntensityBAJEEEN = max(dot(lightDirection, normalizedNormal), 0.0);
+
+         if(viHatarDIFIntensityBAJEEEN > 0.0 && attenuation > 0.0)
+        {
+            FragColor.xyz += albedoTexel.xyz * viHatarDIFIntensityBAJEEEN * light_diffuse[i].xyz * attenuation;
+
+            vec3 vectorToEye = normalize(vecToEye);
+            vec3 halfVector = normalize(lightDirection + vectorToEye);
+            float initialBrightness = max(dot(halfVector, normalizedNormal), 0.0);
+
+            float shininess = max(specularTexel.r * 128.0, 1.0);
+            float totalBrightness = pow(initialBrightness, shininess);
+
+            FragColor.xyz += totalBrightness * light_specular[i].xyz * materialSpecular.xyz * attenuation;
+        }
+    }
+  
+
+        
+}
     //calc distance for attenuation, ergo dampen the load
-    float distance = length(light_position - position);
-    float attenuation = 1.0 / (light_attenuation.x + light_attenuation.y * distance + light_attenuation.z * pow(distance, 2.0));
+    // float distance = length(light_position - position);
+    // float attenuation = 1.0 / (light_attenuation.x + light_attenuation.y * distance + light_attenuation.z * pow(distance, 2.0));
 
-    //diffuse / difIntensity FUCK DIF BAJEEEEEEEEEEEN
-    float viHatarDIFIntensityBAJEEEN = max(dot(lightDirection, normalizedNormal), 0.0);
 
     //if fragment is facing light calc diffuse 
-    if(viHatarDIFIntensityBAJEEEN > 0.0)
-    {
-        FragColor.xyz += albedoTexel.xyz * viHatarDIFIntensityBAJEEEN * light_diffuse.xyz * attenuation;
-        
-        vec3 vectorToEye = normalize(vecToEye);
-        vec3 halfVector = normalize(lightDirection + vectorToEye);
-        float initialBrightness = max(dot(halfVector, normalizedNormal), 0.0);
-
-        float shininess = max(specularTexel.r * 128.0, 1.0);
-        float totalBrightness = pow(initialBrightness, shininess);
-
-        FragColor.xyz += totalBrightness * light_specular.xyz * materialSpecular.xyz * attenuation;
-    }
-}
+   

@@ -3,6 +3,7 @@
 #include "../MessageManager.h"
 #include <vector>
 #include "core/camera.h"
+#include "shaders/LightManager.h"
 struct ImGuiIO;
 struct GLFWwindow;
 
@@ -23,6 +24,7 @@ public:
     void RenderCubeControls(std::vector<CubeTransform>& cubes, int& selectedCubeIndex, CubeTransform& newCubeTransform);
 
 	void RenderCameraControls(camera& camera, float& FOV);
+    void RenderLightingControls(LightManager& lightMGR);
 
     bool bInitialized = false;
 

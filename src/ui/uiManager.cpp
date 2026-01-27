@@ -9,6 +9,8 @@
 #include "graphics/renderer.h"
 #include <core/camera.h>
 
+#include "shaders/LightManager.h"
+
 extern GLFWwindow* window;
  
 uiManager::uiManager() 
@@ -230,6 +232,78 @@ void uiManager::RenderCameraControls(camera& camera, float& FOV)
     ImGui::Text("Up Vector:");
     ImGui::DragFloat3("Up", &camera.Up.x, 0.1f, -1.0f, 1.0f);
 
+    ImGui::End();
+}
+#pragma endregion
+
+#pragma region Lighting
+void uiManager::RenderLightingControls(LightManager& lightMGR)
+{
+     ImGui::Begin("Lighting Controls");
+    
+    ImGui::Text("Global Ambient");
+    ImGui::ColorEdit4("##ambient", glm::value_ptr(lightMGR.globalAmbient));
+    
+    ImGui::Separator();
+    ImGui::Text("Lights: %d", lightMGR.GetLightCount());
+    
+    if (ImGui::Button("Add Point Light"))
+    {
+        light newLight;
+        newLight.name = "Point Light " + std::to_string(lightMGR.GetLightCount());
+        newLight.type = LightType::POINT;
+        lightMGR.AddLight(newLight);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Add Directional Light"))
+    {
+        light newLight;
+        newLight.name = "Directional Light " + std::to_string(lightMGR.GetLightCount());
+        newLight.type = LightType::DIRECTIONAL;
+        lightMGR.AddLight(newLight);
+    }
+    ImGui::SameLine();
+    if (ImGui::Button("Add Spotlight"))
+    {
+        light newLight;
+        newLight.name = "Spotlight " + std::to_string(lightMGR.GetLightCount());
+        newLight.type = LightType::SPOT;
+        lightMGR.AddLight(newLight);
+    }
+    
+    ImGui::Separator();
+    
+    for (int i = 0; i < lightMGR.GetLightCount(); i++)
+    {
+        light* light = lightMGR.GetLight(i);
+        
+        if (ImGui::TreeNode(light->name.c_str()))
+        {
+            ImGui::Checkbox("Enabled##light", &light->bEnabled);
+            
+            ImGui::DragFloat3("Position##light", glm::value_ptr(light->position), 0.1f);
+            ImGui::DragFloat3("Direction##light", glm::value_ptr(light->direction), 0.01f, -1.0f, 1.0f);
+            
+            ImGui::ColorEdit4("Diffuse##light", glm::value_ptr(light->diffuse));
+            ImGui::ColorEdit4("Specular##light", glm::value_ptr(light->specular));
+            
+            ImGui::DragFloat3("Attenuation##light", glm::value_ptr(light->attenuation), 0.01f, 0.0f, 10.0f);
+            
+            if (light->type == LightType::SPOT)
+            {
+                ImGui::SliderFloat("Spot Cutoff##light", &light->spotCutoff, 0.0f, 1.0f);
+                ImGui::SliderInt("Spot Exponent##light", &light->spotExponent, 1, 128);
+            }
+            
+            if (ImGui::Button("Delete Light"))
+            {
+                lightMGR.RemoveLight(i);
+            }
+            
+            ImGui::TreePop();
+        }
+    }
+    
     ImGui::End();
 }
 #pragma endregion

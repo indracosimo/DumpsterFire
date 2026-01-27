@@ -6,6 +6,7 @@
 #include <iostream>
 #include "../MeshManager.h"
 #include "glm/gtc/type_ptr.hpp"
+#include "shaders/LightManager.h"
 
 
 renderer::renderer(unsigned int width, unsigned int height)
@@ -108,10 +109,48 @@ void renderer::render(const std::vector<CubeTransform>& cubes, camera& cam)
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+#pragma region Lighting
+	LightManager& lightMgr = LightManager::GetInstance();
 	mainShader->use();
+    
+	int activeLights = std::min(16, lightMgr.GetLightCount());
+	glUniform1i(glGetUniformLocation(mainShader->ID, "activeLights"), activeLights);
+	glUniform4fv(glGetUniformLocation(mainShader->ID, "global_ambient"), 1, glm::value_ptr(lightMgr.globalAmbient));
 	mainShader->setInt("texture1", 0);
 
+	//light arrays
+	std::vector<int> types(16);
+	std::vector<glm::vec3> positions(16);
+	std::vector<glm::vec3> directions(16);
+	std::vector<glm::vec4> diffuses(16);
+	std::vector<glm::vec4> specular(16);
+	std::vector<glm::vec3> attenuation(16);
+	std::vector<float> cutoffs(16);
+	std::vector<int> exponents(16);
+
+	for (int i = 0; i < activeLights; i++)
+	{
+		const light* Light = lightMgr.GetLight(i);
+		types[i] = (int)Light->type;
+		positions[i] = Light->position;
+		directions[i] = Light->direction;
+		diffuses[i] = Light->diffuse;
+		specular[i] = Light->specular;
+		attenuation[i] = Light->attenuation;
+		cutoffs[i] = Light->spotCutoff;
+		exponents[i] = Light->spotExponent;
+	}
+
+	//uniform arrays
+	glUniform1iv(glGetUniformLocation(mainShader->ID, "light_type"), 16, types.data());
+	glUniform3fv(glGetUniformLocation(mainShader->ID, "light_position"), 16, glm::value_ptr(positions[0]));
+	glUniform3fv(glGetUniformLocation(mainShader->ID, "light_direction"), 16, glm::value_ptr(directions[0]));
+	glUniform4fv(glGetUniformLocation(mainShader->ID, "light_diffuse"), 16, glm::value_ptr(diffuses[0]));
+	glUniform4fv(glGetUniformLocation(mainShader->ID, "light_specular"), 16, glm::value_ptr(specular[0]));
+	glUniform3fv(glGetUniformLocation(mainShader->ID, "light_attenuation"), 16, glm::value_ptr(attenuation[0]));
+	glUniform1fv(glGetUniformLocation(mainShader->ID, "light_spotCutoff"), 16, cutoffs.data());
+	glUniform1iv(glGetUniformLocation(mainShader->ID, "light_spotExponent"), 16, exponents.data());
+#pragma endregion
 	glActiveTexture(GL_TEXTURE0);
 	// glBindTexture(GL_TEXTURE_2D, texture1);
 	//glBindVertexArray(VAO);
