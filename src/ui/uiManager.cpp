@@ -150,7 +150,15 @@ void uiManager::RenderCubeControls(std::vector<CubeTransform>& cubes, int& selec
                 cube.texturePath = texturePathBuffer;
                 cube.textureID = loadTexture(cube.texturePath.c_str());
             }
-
+            //ui for specular map
+            static char specularPathBuffer[256];
+            strncpy_s(specularPathBuffer, cube.specularMapPath.c_str(), sizeof(specularPathBuffer));
+            if (ImGui::InputText("Specular Map Path", specularPathBuffer, sizeof(specularPathBuffer)))
+            {
+                cube.specularMapPath = specularPathBuffer;
+                cube.specularMapID = loadTexture(cube.specularMapPath.c_str());
+            }
+            
             std::vector<char> cubeNameBuffer(cube.name.begin(), cube.name.end());
             cubeNameBuffer.resize(256);
 

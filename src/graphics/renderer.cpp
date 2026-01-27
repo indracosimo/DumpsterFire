@@ -118,8 +118,17 @@ void renderer::render(const std::vector<CubeTransform>& cubes, camera& cam)
 
 	for (const auto& cube : cubes)
 	{
+		// glBindTexture(GL_TEXTURE_2D, cube.textureID);
+		//unit 0
+		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, cube.textureID);
-		
+		GLint albedoLoc = glGetUniformLocation(mainShader->ID, "albedoMap");
+		glUniform1i(albedoLoc, 0);
+		// unit 2
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, cube.specularMapID);
+		GLint specularLoc = glGetUniformLocation(mainShader->ID, "specularMap");
+		glUniform1i(specularLoc, 1);
 		// glm::mat4 model = glm::mat4(1.0f);
 		// glm::mat4 projection = glm::perspective(glm::radians(45.0f),
 		// 	float(SCR_WIDTH) / SCR_HEIGHT,

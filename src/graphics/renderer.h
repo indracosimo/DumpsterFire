@@ -17,6 +17,9 @@ struct CubeTransform //Entity transform data
 
 	unsigned int textureID = 0;
 	std::string texturePath;
+
+	unsigned int specularMapID = 0;
+	std::string specularMapPath;
 };
 
 class renderer
