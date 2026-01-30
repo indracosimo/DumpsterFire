@@ -14,11 +14,12 @@ Mesh objectLoader::loadOBJ(const std::string& filepath)
     std::vector<float> finalVertices;
 
     std::ifstream file(filepath);
-    if (!file.is_open()) {
+    if (!file.is_open())
+    {
         std::cerr << "Failed to open OBJ: " << filepath << std::endl;
-        return Mesh(std::vector<float>());
+        return Mesh({});
     }
-    //std::cerr << "Successfully opened OBJ: " << filepath << std::endl;
+
     std::string line;
     while (std::getline(file, line))
     {
@@ -26,19 +27,19 @@ Mesh objectLoader::loadOBJ(const std::string& filepath)
         std::string type;
         ss >> type;
 
-        if (type == "v") 
+        if (type == "v")
         {
             glm::vec3 v;
             ss >> v.x >> v.y >> v.z;
             positions.push_back(v);
         }
-        else if (type == "vt") 
+        else if (type == "vt")
         {
             glm::vec2 t;
             ss >> t.x >> t.y;
             texcoords.push_back(t);
         }
-        else if (type == "vn") 
+        else if (type == "vn")
         {
             glm::vec3 n;
             ss >> n.x >> n.y >> n.z;
@@ -46,45 +47,48 @@ Mesh objectLoader::loadOBJ(const std::string& filepath)
         }
         else if (type == "f")
         {
+            int p[3], t[3], n[3];
+            glm::vec3 pos[3];
+            glm::vec2 uv[3];
+
             for (int i = 0; i < 3; i++)
             {
                 std::string vert;
                 ss >> vert;
 
-                int p = 0, t = 0, n = 0;
-                // detect format
-				// if no slashes only p(position) is parsed, if double slashes p and n(position and normal), else all 3 are parsed
-                if (vert.find('/') == std::string::npos)
-                {
-                    p = std::stoi(vert);
-                }
-                else if (vert.find("//") != std::string::npos)
-                {
-                    sscanf_s(vert.c_str(), "%d//%d", &p, &n);
-                }
+                p[i] = t[i] = n[i] = 0;
+
+                if (vert.find("//") != std::string::npos)
+                    sscanf_s(vert.c_str(), "%d//%d", &p[i], &n[i]);
+                else if (vert.find('/') != std::string::npos)
+                    sscanf_s(vert.c_str(), "%d/%d/%d", &p[i], &t[i], &n[i]);
                 else
-                {
-                    sscanf_s(vert.c_str(), "%d/%d/%d", &p, &t, &n);
-                }
+                    p[i] = std::stoi(vert);
 
-                glm::vec3 pos = positions[p - 1];
-
-                glm::vec2 tex(0.0f);  
-                if (t > 0) tex = texcoords[t - 1];
-
-                glm::vec3 color(1.0f); 
-
-                finalVertices.insert(finalVertices.end(), 
-                    {
-                    pos.x, pos.y, pos.z,
-                    tex.x, tex.y,
-                    color.x, color.y, color.z
-                    });
+                pos[i] = positions[p[i] - 1];
+                uv[i]  = (t[i] > 0) ? texcoords[t[i] - 1] : glm::vec2(0.0f);
             }
+            //face normal calc
+            glm::vec3 edge1 = pos[1] - pos[0];
+            glm::vec3 edge2 = pos[2] - pos[0];
+            glm::vec3 faceNormal = glm::normalize(glm::cross(edge1, edge2));
 
+            // push all 3 vertices with same normal
+            for (int i = 0; i < 3; i++)
+            {
+                finalVertices.push_back(pos[i].x);
+                finalVertices.push_back(pos[i].y);
+                finalVertices.push_back(pos[i].z);
+
+                finalVertices.push_back(uv[i].x);
+                finalVertices.push_back(uv[i].y);
+
+                finalVertices.push_back(faceNormal.x);
+                finalVertices.push_back(faceNormal.y);
+                finalVertices.push_back(faceNormal.z);
+            }
         }
     }
 
     return Mesh(finalVertices);
-
 }

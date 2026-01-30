@@ -33,15 +33,6 @@ void uiManager::Initialize(GLFWwindow* window)
     ImGuiIO& io = ImGui::GetIO();
     io.FontGlobalScale = 1.0f;
     (void)io;
-    //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;   
-    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
-    //ImGuiStyle& style = ImGui::GetStyle();
-    //if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    //{
-    //    style.WindowRounding = 0.0f;
-    //    style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-    //}
     ImGui::StyleColorsDark();
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
@@ -68,15 +59,6 @@ void uiManager::EndFrame()
 {
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    //glDisable(GL_DEPTH_TEST);              
-    //ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    //glEnable(GL_DEPTH_TEST);
-    //ImGuiIO& io = ImGui::GetIO();
-    //if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    //{
-    //    ImGui::UpdatePlatformWindows();
-    //    ImGui::RenderPlatformWindowsDefault();
-    //}
 }
 
 #pragma region Cube Controls
@@ -322,30 +304,3 @@ void uiManager::RenderLightingControls(LightManager& lightMGR)
     ImGui::End();
 }
 #pragma endregion
-//void uiManager::RenderDocking()
-//{
-//    ImGuiIO& io = ImGui::GetIO();
-//    if (!(io.ConfigFlags & ImGuiConfigFlags_DockingEnable))
-//        return;
-//
-//    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoCollapse |
-//        ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
-//        ImGuiWindowFlags_NoBringToFrontOnFocus |
-//        ImGuiWindowFlags_NoNavFocus;
-//
-//    ImGuiViewport* viewport = ImGui::GetMainViewport();
-//    ImGui::SetNextWindowPos(viewport->WorkPos);
-//    ImGui::SetNextWindowSize(viewport->WorkSize);
-//    ImGui::SetNextWindowViewport(viewport->ID);
-//
-//    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
-//    ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-//
-//    ImGui::Begin("DockSpace Main Window", nullptr, window_flags);
-//    ImGui::PopStyleVar(2);
-//
-//    ImGuiID dockspace_id = ImGui::GetID("MainDockSpace");
-//    ImGui::DockSpace(dockspace_id, ImVec2(0, 0), ImGuiDockNodeFlags_PassthruCentralNode);
-//
-//    ImGui::End();
-//}
