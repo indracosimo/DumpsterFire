@@ -7,14 +7,16 @@
 #include "../MeshManager.h"
 #include "glm/gtc/type_ptr.hpp"
 #include "shaders/LightManager.h"
+#include "shaders/ShadowMapper.h"
 
 
-renderer::renderer(unsigned int width, unsigned int height)
-	: SCR_WIDTH(width), SCR_HEIGHT(height)
+renderer::renderer(unsigned int width, unsigned int height) : SCR_WIDTH(width), SCR_HEIGHT(height)
 {
 	glEnable(GL_DEPTH_TEST);
 	mainShader = new Shader("src/shaders/vertexShader.vs", "src/shaders/fragmentShader.fs");
 
+	shadowMapper = new ShadowMapper();
+	
 	setupCube();
 	setupQuad();
 	setupFramebuffer();
@@ -103,14 +105,74 @@ void renderer::loadTextures()
 void renderer::render(const std::vector<CubeTransform>& cubes, camera& cam) 
 {
 	Mesh* planeMesh = MeshManager::GetInstance().GetMesh("assets/obj/quadPlane.obj");
+	
+	LightManager& lightMgr = LightManager::GetInstance();
+    for (int i = 0; i < lightMgr.GetLightCount(); i++)
+    {
+        light* currentLight = lightMgr.GetLight(i);
+        if (!currentLight || !currentLight->bCastShadows)
+            continue;
+
+        shadowMapper->initializeShadowMap(*currentLight);
+
+        if (currentLight->type != LightType::DIRECTIONAL)
+            continue;
+
+        shadowMapper->beginShadowPass(
+            *currentLight,
+            cam.GetViewMatrix(),
+            cam.GetProjectionMatrix(45.0f, 0.1f, 100.0f)
+        );
+
+        for (const auto& cube : cubes)
+        {
+            glm::mat4 model(1.0f);
+            model = glm::translate(model, cube.position);
+            model = glm::rotate(model, glm::radians(cube.rotation.x), glm::vec3(1,0,0));
+            model = glm::rotate(model, glm::radians(cube.rotation.y), glm::vec3(0,1,0));
+            model = glm::rotate(model, glm::radians(cube.rotation.z), glm::vec3(0,0,1));
+            model = glm::scale(model, cube.scale);
+
+            GLint modelLoc = glGetUniformLocation(
+                shadowMapper->shadowDepthShader->ID,
+                "modelMatrix"
+            );
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+
+            if (!cube.meshPath.empty())
+            {
+                Mesh* mesh = MeshManager::GetInstance().GetMesh(cube.meshPath);
+                if (mesh && mesh->vertexCount > 0)
+                    mesh->DrawMesh();
+            }
+            else
+            {
+                glBindVertexArray(VAO);
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            }
+        }
+
+        if (planeMesh)
+        {
+            glm::mat4 model(1.0f);
+            GLint modelLoc = glGetUniformLocation(
+                shadowMapper->shadowDepthShader->ID,
+                "modelMatrix"
+            );
+            glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
+            planeMesh->DrawMesh();
+        }
+
+        shadowMapper->endShadowPass();
+    }
 
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//glBindFramebuffer(GL_FRAMEBUFFER, bEnableCRT ? framebuffer : 0);
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
 #pragma region Lighting
-	LightManager& lightMgr = LightManager::GetInstance();
+	
 	mainShader->use();
     
 	int activeLights = std::min(16, lightMgr.GetLightCount());
@@ -150,30 +212,41 @@ void renderer::render(const std::vector<CubeTransform>& cubes, camera& cam)
 	glUniform3fv(glGetUniformLocation(mainShader->ID, "light_attenuation"), 16, glm::value_ptr(attenuation[0]));
 	glUniform1fv(glGetUniformLocation(mainShader->ID, "light_spotCutoff"), 16, cutoffs.data());
 	glUniform1iv(glGetUniformLocation(mainShader->ID, "light_spotExponent"), 16, exponents.data());
+
+	// Bind shadow map for first directional light
+	if (activeLights > 0)
+	{
+		light* firstLight = lightMgr.GetLight(0);
+		if (firstLight && firstLight->type == LightType::DIRECTIONAL && firstLight->bCastShadows)
+		{
+			shadowMapper->bindShadowMap(*firstLight, mainShader, 2); // Use texture unit 2
+			glUniform1i(glGetUniformLocation(mainShader->ID, "bUseShadowMap"), 1);
+		}
+		else
+		{
+			glUniform1i(glGetUniformLocation(mainShader->ID, "bUseShadowMap"), 0);
+		}
+	}
+
 #pragma endregion
+
 	glActiveTexture(GL_TEXTURE0);
-	// glBindTexture(GL_TEXTURE_2D, texture1);
-	//glBindVertexArray(VAO);
 
 	for (const auto& cube : cubes)
 	{
-		// glBindTexture(GL_TEXTURE_2D, cube.textureID);
-		//unit 0
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, cube.textureID);
 		GLint albedoLoc = glGetUniformLocation(mainShader->ID, "albedoMap");
 		glUniform1i(albedoLoc, 0);
-		// unit 2
+		
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, cube.specularMapID);
 		GLint specularLoc = glGetUniformLocation(mainShader->ID, "specularMap");
 		glUniform1i(specularLoc, 1);
-		// glm::mat4 model = glm::mat4(1.0f);
-		// glm::mat4 projection = glm::perspective(glm::radians(45.0f),
-		// 	float(SCR_WIDTH) / SCR_HEIGHT,
-		// 	0.1f, 9999.0f);
+
 		GLint texLoc = glGetUniformLocation(mainShader->ID, "texture1");
 		glUniform1i(texLoc, 0);
+		
 		glm::mat4 model = glm::mat4(1.0f);
 		model = glm::translate(model, cube.position);
 		model = glm::rotate(model, glm::radians(cube.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -184,20 +257,12 @@ void renderer::render(const std::vector<CubeTransform>& cubes, camera& cam)
 		GLint modelLoc = glGetUniformLocation(mainShader->ID, "modelMatrix");
 		glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
 
-		// Set lighting uniforms
-		GLint lightPosLoc = glGetUniformLocation(mainShader->ID, "lightPos");
-		glUniform3f(lightPosLoc, 10.0f, 25.0f, 15.0f);
-
 		GLint viewPosLoc = glGetUniformLocation(mainShader->ID, "viewPos");
-		glUniform3fv(viewPosLoc, 1, glm::value_ptr(cam.Position));  // Use camera position
+		glUniform3fv(viewPosLoc, 1, glm::value_ptr(cam.Position));
 
 		GLint lightColorLoc = glGetUniformLocation(mainShader->ID, "lightColor");
 		glUniform3f(lightColorLoc, 1.0f, 0.9f, 0.8f);
 		
-		// mainShader->setMat4("projection", projection);
-		// mainShader->setMat4("model", model);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-
 		Mesh* meshToDraw = nullptr;
 		if (!cube.meshPath.empty())
 		{
@@ -214,29 +279,8 @@ void renderer::render(const std::vector<CubeTransform>& cubes, camera& cam)
 			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 	}
-	//planeMesh->DrawMesh();
-
 
 	glBindVertexArray(0);
-
-	// CRT post-process pass
-	//if (bEnableCRT)
-	//{
-	//	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	//	glDisable(GL_DEPTH_TEST);
-	//	glClear(GL_COLOR_BUFFER_BIT);
-
-	//	crtShader->use();
-	//	glActiveTexture(GL_TEXTURE0);
-	//	glBindTexture(GL_TEXTURE_2D, texColorBuffer);
-	//	crtShader->setInt("iChannel0", 0);
-	//	crtShader->setVec2("iResolution", glm::vec2(SCR_WIDTH, SCR_HEIGHT));
-	//	crtShader->setFloat("iTime", glfwGetTime());
-
-	//	glBindVertexArray(quadVAO);
-	//	glDrawArrays(GL_TRIANGLES, 0, 6);
-	//	glBindVertexArray(0);
-	//}
 }
 
 
@@ -271,7 +315,7 @@ void setupVertexBuffer(std::vector<Vertex>& vertices, GLuint& VAO, GLuint& VBO, 
 	glBindVertexArray(0);
 }
 
-void setupPhongUniforms(GLuint shaderProgram, const glm::mat4& model, const glm::mat4& view, const glm::vec4& projection)
+void setupPhongUniforms(GLuint shaderProgram, const glm::mat4& model, const glm::mat4& view, const glm::mat4& projection)
 {
 	//  uniform locations
 	GLint modelLoc = glGetUniformLocation(shaderProgram, "modelMatrix");

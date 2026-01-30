@@ -6,6 +6,8 @@
 
 #include "core/camera.h"
 
+class ShadowMapper;
+
 struct CubeTransform //Entity transform data
 {
     std::string name = "Nameless Cube";
@@ -32,6 +34,8 @@ public:
 	Shader* mainShader = nullptr;
 
 private:
+	ShadowMapper* shadowMapper;
+	
     unsigned int SCR_WIDTH, SCR_HEIGHT;
     unsigned int VAO = 0, VBO = 0, quadVAO = 0, quadVBO = 0;
     unsigned int framebuffer = 0, texColorBuffer = 0, RBO = 0;

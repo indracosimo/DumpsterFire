@@ -20,6 +20,13 @@ uniform int light_spotExponent[MAX_LIGHTS];
 uniform vec4 materialAmbient = vec4(1.0, 1.0, 1.0, 1.0);
 uniform vec4 materialDiffuse = vec4(1.0, 1.0, 1.0, 1.0);
 uniform vec4 materialSpecular = vec4(1.0, 1.0, 1.0, 1.0);
+
+//shadow mapping
+uniform sampler2D shadowMap;
+uniform mat4 shadowMapMatrix;
+uniform vec2 shadowMapTexelSize = vec2(1.0/2048.0, 1.0/2048.0);
+uniform float shadowCalcBias = 0.0005;
+uniform bool bUseShadowMap = false;
 //uniform int materialShininess = 32;
 //texture maps
 //uniform sampler2D texture1;
@@ -33,6 +40,34 @@ in vec3 position;
 in vec3 vecToEye;
 
 out vec4 FragColor;  
+
+float CalcShadow()
+{
+     if (!bUseShadowMap)
+        return 0.0;
+    
+    vec4 shadowSpace = shadowMapMatrix * vec4(position, 1.0);
+   
+    shadowSpace.xyz /= shadowSpace.w;
+    
+    // check if coordinates are within shadow map range [0, 1]
+    if (shadowSpace.xy.x < 0.0 || shadowSpace.xy.x > 1.0 ||
+        shadowSpace.xy.y < 0.0 || shadowSpace.xy.y > 1.0)
+    {
+        return 0.0;
+    }
+    
+    // sample shadow map
+    float closestDepth = texture(shadowMap, shadowSpace.xy).r;
+    float fragDepth = shadowSpace.z;
+    
+    if (fragDepth > closestDepth + shadowCalcBias)
+    {
+        return 1.0;
+    }
+    
+    return 0.0;
+}
 
 void main()
 {
@@ -97,7 +132,8 @@ void main()
 
          if(viHatarDIFIntensityBAJEEEN > 0.0 && attenuation > 0.0)
         {
-            FragColor.xyz += albedoTexel.xyz * viHatarDIFIntensityBAJEEEN * light_diffuse[i].xyz * attenuation;
+            float shadow = CalcShadow();
+            FragColor.xyz += (1.0 - shadow) * albedoTexel.xyz * viHatarDIFIntensityBAJEEEN * light_diffuse[i].xyz * attenuation;
 
             vec3 vectorToEye = normalize(vecToEye);
             vec3 halfVector = normalize(lightDirection + vectorToEye);
@@ -106,12 +142,9 @@ void main()
             float shininess = max(specularTexel.r * 128.0, 1.0);
             float totalBrightness = pow(initialBrightness, shininess);
 
-            FragColor.xyz += totalBrightness * light_specular[i].xyz * materialSpecular.xyz * attenuation;
+            FragColor.xyz += (1.0 - shadow) * totalBrightness * light_specular[i].xyz * materialSpecular.xyz * attenuation;
         }
     }
-  
-
-        
 }
     //calc distance for attenuation, ergo dampen the load
     // float distance = length(light_position - position);

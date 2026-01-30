@@ -162,6 +162,7 @@
     <ClCompile Include="src\graphics\textureLoader.cpp" />
     <ClCompile Include="src\core\stb_image.cpp" />
     <ClCompile Include="src\shaders\LightManager.cpp" />
+    <ClCompile Include="src\shaders\ShadowMapper.cpp" />
     <ClCompile Include="src\ui\uiManager.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -560,6 +561,7 @@
     <ClInclude Include="src\shaders\light.h" />
     <ClInclude Include="src\shaders\LightManager.h" />
     <ClInclude Include="src\shaders\shader.h" />
+    <ClInclude Include="src\shaders\ShadowMapper.h" />
     <ClInclude Include="src\ui\uiManager.h" />
   </ItemGroup>
   <ItemGroup>
@@ -719,6 +721,8 @@
     <None Include="Dependencies\lib\glfw3.pdb" />
     <None Include="imgui.ini" />
     <None Include="src\shaders\fragmentShader.fs" />
+    <None Include="src\shaders\shadowDepth.fs" />
+    <None Include="src\shaders\shadowDepth.vs" />
     <None Include="src\shaders\vertexShader.vs" />
     <None Include="x64\Debug\DumpsterFireEngine.exe" />
     <None Include="x64\Debug\DumpsterFireEngine.pdb" />
@@ -734,6 +738,12 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="assets\images\concrete.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="src\shaders\shadowDepth.vs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="src\shaders\shadowDepth.fs" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

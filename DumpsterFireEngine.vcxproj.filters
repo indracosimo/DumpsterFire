@@ -84,6 +84,15 @@
     <ClCompile Include="MemoryChecker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="MeshManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shaders\LightManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\shaders\ShadowMapper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Dependencies\entt\container\dense_map.hpp">
@@ -1265,6 +1274,18 @@
     <ClInclude Include="src\DebugLogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MeshManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaders\light.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaders\LightManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\shaders\ShadowMapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Natvis Include="Dependencies\entt\natvis\config.natvis" />
@@ -1705,6 +1726,8 @@
     <None Include="x64\Debug\DumpsterFireEngine.exe" />
     <None Include="x64\Debug\DumpsterFireEngine.pdb" />
     <None Include="x64\Debug\imgui.ini" />
+    <None Include="src\shaders\shadowDepth.fs" />
+    <None Include="src\shaders\shadowDepth.vs" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="Dependencies\include\glm\CMakeLists.txt" />

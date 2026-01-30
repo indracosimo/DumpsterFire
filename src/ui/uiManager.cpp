@@ -257,9 +257,24 @@ void uiManager::RenderLightingControls(LightManager& lightMGR)
     ImGui::SameLine();
     if (ImGui::Button("Add Directional Light"))
     {
-        light newLight;
+        light newLight{};
+
         newLight.name = "Directional Light " + std::to_string(lightMGR.GetLightCount());
         newLight.type = LightType::DIRECTIONAL;
+        
+        newLight.bEnabled = true;
+        newLight.bCastShadows = true;
+
+        newLight.direction = glm::normalize(glm::vec3(-0.5f, -1.0f, -0.3f));
+        newLight.position = glm::vec3(0.0f);
+        
+        newLight.shadowMapResolution = { 2048, 2048 };
+        newLight.shadowMapZoom = 20.0f;
+        newLight.shadowMapRenderPosition = glm::vec3(0.0f, 20.0f, 0.0f);
+        
+        newLight.shadowFrameBuffer = 0;
+        newLight.shadowDepthTexture = 0;
+
         lightMGR.AddLight(newLight);
     }
     ImGui::SameLine();

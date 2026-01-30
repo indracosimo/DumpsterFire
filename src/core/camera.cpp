@@ -9,7 +9,7 @@ glm::mat4 camera::GetViewMatrix() const
 
 glm::mat4 camera::GetProjectionMatrix(float FOVdeg, float nearPlane, float farPlane) const
 {
-	return glm::perspective(glm::radians(FOVdeg), (float)width / (float)height, nearPlane, farPlane);
+	return glm::perspective(glm::radians(FOVdeg), static_cast<float>(width) / static_cast<float>(height), nearPlane, farPlane);
 }
 
 camera::camera(int width, int height, glm::vec3 position)
