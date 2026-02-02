@@ -218,7 +218,7 @@ void uiManager::RenderCameraControls(camera& camera, float& FOV)
 }
 #pragma endregion
 
-#pragma region Lighting
+#pragma region Lighting Controls
 void uiManager::RenderLightingControls(LightManager& lightMGR)
 {
      ImGui::Begin("Lighting Controls");

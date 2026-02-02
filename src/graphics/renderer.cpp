@@ -118,11 +118,7 @@ void renderer::render(const std::vector<CubeTransform>& cubes, camera& cam)
         if (currentLight->type != LightType::DIRECTIONAL)
             continue;
 
-        shadowMapper->beginShadowPass(
-            *currentLight,
-            cam.GetViewMatrix(),
-            cam.GetProjectionMatrix(45.0f, 0.1f, 100.0f)
-        );
+        shadowMapper->beginShadowPass(*currentLight, cam.GetViewMatrix(), cam.GetProjectionMatrix(45.0f, 0.1f, 100.0f));
 
         for (const auto& cube : cubes)
         {
@@ -155,10 +151,7 @@ void renderer::render(const std::vector<CubeTransform>& cubes, camera& cam)
         if (planeMesh)
         {
             glm::mat4 model(1.0f);
-            GLint modelLoc = glGetUniformLocation(
-                shadowMapper->shadowDepthShader->ID,
-                "modelMatrix"
-            );
+			GLint modelLoc = glGetUniformLocation(shadowMapper->shadowDepthShader->ID,"modelMatrix");
             glUniformMatrix4fv(modelLoc, 1, GL_FALSE, glm::value_ptr(model));
             planeMesh->DrawMesh();
         }
